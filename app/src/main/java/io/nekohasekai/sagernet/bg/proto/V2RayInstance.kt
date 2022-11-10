@@ -42,6 +42,8 @@ import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
+import io.nekohasekai.sagernet.fmt.tuic.TuicBean
+import io.nekohasekai.sagernet.fmt.tuic.buildTuicConfig
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.fmt.wireguard.buildWireGuardUapiConf
 import io.nekohasekai.sagernet.ktx.*
@@ -120,6 +122,18 @@ abstract class V2RayInstance(
                     is MieruBean -> {
                         initPlugin("mieru-plugin")
                         pluginConfigs[port] = profile.type to bean.buildMieruConfig(port)
+                    }
+                    is TuicBean -> {
+                        initPlugin("tuic-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildTuicConfig(port) {
+                            File(
+                                app.noBackupFilesDir,
+                                "tuic_" + SystemClock.elapsedRealtime() + ".ca"
+                            ).apply {
+                                parentFile?.mkdirs()
+                                cacheFiles.add(this)
+                            }
+                        }
                     }
                     is WireGuardBean -> {
                         initPlugin("wireguard-plugin")
@@ -243,6 +257,24 @@ abstract class V2RayInstance(
                         )
 
                         processes.start(commands, envMap)
+                    }
+                    bean is TuicBean -> {
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "tuic_" + SystemClock.elapsedRealtime() + ".json"
+                        )
+
+                        configFile.parentFile?.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        val commands = mutableListOf(
+                            initPlugin("tuic-plugin").path,
+                            "-c",
+                            configFile.absolutePath,
+                        )
+
+                        processes.start(commands)
                     }
                     bean is WireGuardBean -> {
                         val configFile = File(

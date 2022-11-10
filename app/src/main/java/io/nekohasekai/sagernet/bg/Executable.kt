@@ -36,6 +36,7 @@ object Executable {
         "libnaive.so",
         "libhysteria.so",
         "libmieru.so",
+        "libtuic.so",
         "libwg.so"
     )
 

@@ -435,4 +435,10 @@
     <string name="backup_import">وارد كردن</string>
     <string name="backup_import_summary">وارد کردن داده‌های موجود را بازنویسی می‌کند.</string>
     <string name="backup_importing">در حال وارد کردن…</string>
+
+    <string name="tuic_udp_relay_mode">حالت رله UDP</string>
+    <string name="tuic_token">رمز</string>
+    <string name="tuic_congestion_controller">کنترل کننده ازدحام</string>
+    <string name="tuic_disable_sni">غیر فعال کردن SNI</string>
+    <string name="tuic_reduce_rtt">کاهش RTT</string>
 </resources>

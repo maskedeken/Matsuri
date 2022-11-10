@@ -37,7 +37,8 @@ import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.naive.toUri
-import io.nekohasekai.sagernet.fmt.shadowsocks.*
+import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.toUri
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
@@ -48,6 +49,8 @@ import io.nekohasekai.sagernet.fmt.trojan.toUri
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.toUri
+import io.nekohasekai.sagernet.fmt.tuic.TuicBean
+import io.nekohasekai.sagernet.fmt.tuic.buildTuicConfig
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
@@ -58,7 +61,10 @@ import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.isTLS
 import io.nekohasekai.sagernet.ui.profile.*
 import moe.matsuri.nya.Protocols
-import moe.matsuri.nya.neko.*
+import moe.matsuri.nya.neko.NekoBean
+import moe.matsuri.nya.neko.NekoSettingActivity
+import moe.matsuri.nya.neko.haveStandardLink
+import moe.matsuri.nya.neko.shareLink
 
 @Entity(
     tableName = "proxy_entities", indices = [Index("groupId", name = "groupId")]
@@ -84,6 +90,7 @@ data class ProxyEntity(
     var naiveBean: NaiveBean? = null,
     var hysteriaBean: HysteriaBean? = null,
     var mieruBean: MieruBean? = null,
+    var tuicBean: TuicBean? = null,
     var sshBean: SSHBean? = null,
     var wgBean: WireGuardBean? = null,
     var chainBean: ChainBean? = null,
@@ -106,6 +113,7 @@ data class ProxyEntity(
         const val TYPE_WG = 18
 
         const val TYPE_MIERU = 19
+        const val TYPE_TUIC = 20
 
         const val TYPE_CHAIN = 8
 
@@ -195,6 +203,7 @@ data class ProxyEntity(
             TYPE_NAIVE -> naiveBean = KryoConverters.naiveDeserialize(byteArray)
             TYPE_HYSTERIA -> hysteriaBean = KryoConverters.hysteriaDeserialize(byteArray)
             TYPE_MIERU -> mieruBean = KryoConverters.mieruDeserialize(byteArray)
+            TYPE_TUIC -> tuicBean = KryoConverters.tuicDeserialize(byteArray)
             TYPE_SSH -> sshBean = KryoConverters.sshDeserialize(byteArray)
             TYPE_WG -> wgBean = KryoConverters.wireguardDeserialize(byteArray)
 
@@ -216,6 +225,7 @@ data class ProxyEntity(
         TYPE_SSH -> "SSH"
         TYPE_WG -> "WireGuard"
         TYPE_MIERU -> "Mieru"
+        TYPE_TUIC -> "TUIC"
         TYPE_CHAIN -> chainName
         TYPE_NEKO -> nekoBean!!.displayType()
         else -> "Undefined type $type"
@@ -236,6 +246,7 @@ data class ProxyEntity(
             TYPE_NAIVE -> naiveBean
             TYPE_HYSTERIA -> hysteriaBean
             TYPE_MIERU -> mieruBean
+            TYPE_TUIC -> tuicBean
             TYPE_SSH -> sshBean
             TYPE_WG -> wgBean
 
@@ -256,6 +267,7 @@ data class ProxyEntity(
         return when (requireBean()) {
             is HysteriaBean -> false
             is MieruBean -> false
+            is TuicBean -> false
             is SSHBean -> false
             is WireGuardBean -> false
             is NekoBean -> nekoBean!!.haveStandardLink()
@@ -275,6 +287,7 @@ data class ProxyEntity(
             is NaiveBean -> toUri()
             is HysteriaBean -> toUniversalLink()
             is MieruBean -> toUniversalLink()
+            is TuicBean -> toUniversalLink()
             is SSHBean -> toUniversalLink()
             is WireGuardBean -> toUniversalLink()
             is NekoBean -> shareLink()
@@ -313,6 +326,10 @@ data class ProxyEntity(
                                 append("\n\n")
                                 append(bean.buildMieruConfig(port))
                             }
+                            is TuicBean -> {
+                                append("\n\n")
+                                append(bean.buildTuicConfig(port, null))
+                            }
                         }
                     }
                 }
@@ -326,6 +343,7 @@ data class ProxyEntity(
             TYPE_NAIVE -> true
             TYPE_HYSTERIA -> true
             TYPE_MIERU -> true
+            TYPE_TUIC -> true
             TYPE_WG -> true
             TYPE_NEKO -> true
             else -> false
@@ -360,6 +378,7 @@ data class ProxyEntity(
         naiveBean = null
         hysteriaBean = null
         mieruBean = null
+        tuicBean = null
         sshBean = null
         wgBean = null
 
@@ -406,6 +425,10 @@ data class ProxyEntity(
                 type = TYPE_MIERU
                 mieruBean = bean
             }
+            is TuicBean -> {
+                type = TYPE_TUIC
+                tuicBean = bean
+            }
             is SSHBean -> {
                 type = TYPE_SSH
                 sshBean = bean
@@ -440,6 +463,7 @@ data class ProxyEntity(
                 TYPE_NAIVE -> NaiveSettingsActivity::class.java
                 TYPE_HYSTERIA -> HysteriaSettingsActivity::class.java
                 TYPE_MIERU -> MieruSettingsActivity::class.java
+                TYPE_TUIC -> TuicSettingsActivity::class.java
                 TYPE_SSH -> SSHSettingsActivity::class.java
                 TYPE_WG -> WireGuardSettingsActivity::class.java
 

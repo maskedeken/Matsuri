@@ -39,6 +39,7 @@ https://matsuridayo.github.io
 * NaïveProxy ( naive-plugin )
 * Hysteria ( hysteria-plugin )
 * Mieru ( mieru-plugin )
+* TUIC ( tuic-plugin )
 * WireGuard ( wireguard-plugin )
 
 请到项目主页下载插件。
