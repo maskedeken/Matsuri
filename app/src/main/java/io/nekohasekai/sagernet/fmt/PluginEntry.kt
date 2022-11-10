@@ -47,6 +47,11 @@ enum class PluginEntry(
             downloadLink = "https://github.com/MatsuriDayo/plugins/releases?q=Hysteria"
         )
     ),
+    Mieru(
+        "mieru-plugin",
+        SagerNet.application.getString(R.string.action_mieru),
+        "io.nekohasekai.sagernet.plugin.mieru"
+    ),
     WireGuard(
         "wireguard-plugin",
         SagerNet.application.getString(R.string.action_wireguard),

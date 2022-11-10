@@ -38,6 +38,7 @@ https://matsuridayo.github.io
 * Trojan-Go ( trojan-go-plugin )
 * NaïveProxy ( naive-plugin )
 * Hysteria ( hysteria-plugin )
+* Mieru ( mieru-plugin )
 * WireGuard ( wireguard-plugin )
 
 请到项目主页下载插件。

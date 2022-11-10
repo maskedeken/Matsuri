@@ -36,6 +36,8 @@ import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
+import io.nekohasekai.sagernet.fmt.mieru.MieruBean
+import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
@@ -114,6 +116,10 @@ abstract class V2RayInstance(
                                 cacheFiles.add(this)
                             }
                         }
+                    }
+                    is MieruBean -> {
+                        initPlugin("mieru-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildMieruConfig(port)
                     }
                     is WireGuardBean -> {
                         initPlugin("wireguard-plugin")
@@ -218,6 +224,25 @@ abstract class V2RayInstance(
                         }
 
                         processes.start(commands)
+                    }
+                    bean is MieruBean -> {
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "mieru_" + SystemClock.elapsedRealtime() + ".json"
+                        )
+
+                        configFile.parentFile?.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        val envMap = mutableMapOf<String, String>()
+                        envMap["MIERU_CONFIG_JSON_FILE"] = configFile.absolutePath
+
+                        val commands = mutableListOf(
+                            initPlugin("mieru-plugin").path, "run"
+                        )
+
+                        processes.start(commands, envMap)
                     }
                     bean is WireGuardBean -> {
                         val configFile = File(

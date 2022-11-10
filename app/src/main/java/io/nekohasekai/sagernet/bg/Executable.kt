@@ -35,6 +35,7 @@ object Executable {
         "libtrojan-go.so",
         "libnaive.so",
         "libhysteria.so",
+        "libmieru.so",
         "libwg.so"
     )
 
