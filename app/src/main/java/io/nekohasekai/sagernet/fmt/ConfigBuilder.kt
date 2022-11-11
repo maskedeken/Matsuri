@@ -31,6 +31,7 @@ import io.nekohasekai.sagernet.fmt.V2rayBuildResult.IndexEntity
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
+import io.nekohasekai.sagernet.fmt.hysteria.isMultiPort
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -693,6 +694,7 @@ fun buildV2RayConfig(
                                         pluginArgs = listOf(
                                             "--obfs=${bean.obfs}",
                                             "--obfs-param=${bean.obfsParam}",
+
                                             "--protocol=${bean.protocol}",
                                             "--protocol-param=${bean.protocolParam}"
                                         )
@@ -767,9 +769,14 @@ fun buildV2RayConfig(
                 }
 
                 pastEntity?.requireBean()?.apply {
+                    var serverAddr = serverAddress
+                    if (this is HysteriaBean && this.isMultiPort()) {
+                        serverAddr = serverAddress.substringBeforeLast(":")
+                    }
+
                     // don't loopback
-                    if (currentDomainStrategy != "AsIs" && !serverAddress.isIpAddress()) {
-                        domainListDNSDirect.add("full:$serverAddress")
+                    if (currentDomainStrategy != "AsIs" && !serverAddr.isIpAddress()) {
+                        domainListDNSDirect.add("full:$serverAddr")
                     }
                 }
                 if (forTest) {
@@ -1020,9 +1027,14 @@ fun buildV2RayConfig(
 
         // Bypass Lookup for the first profile
         bypassDNSBeans.forEach {
-            if (!it.serverAddress.isIpAddress()) {
-                directLookupDomain.add("full:${it.serverAddress}")
-                if (DataStore.enhanceDomain) tryDomains.add(it.serverAddress)
+            var serverAddr = it.serverAddress
+            if (it is HysteriaBean && it.isMultiPort()) {
+                serverAddr = it.serverAddress.substringBeforeLast(":")
+            }
+
+            if (!serverAddr.isIpAddress()) {
+                directLookupDomain.add("full:${serverAddr}")
+                if (DataStore.enhanceDomain) tryDomains.add(serverAddr)
             }
         }
 

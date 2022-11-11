@@ -172,7 +172,7 @@ data class ProxyEntity(
     }
 
     override fun deserializeFromBuffer(input: ByteBufferInput) {
-        val version = input.readInt()
+        input.readInt()
 
         id = input.readLong()
         groupId = input.readLong()
@@ -307,7 +307,7 @@ data class ProxyEntity(
                 }
 
                 for ((chain) in config.index) {
-                    chain.entries.forEachIndexed { index, (port, profile) ->
+                    chain.entries.forEachIndexed { _, (port, profile) ->
                         when (val bean = profile.requireBean()) {
                             is TrojanGoBean -> {
                                 append("\n\n")
