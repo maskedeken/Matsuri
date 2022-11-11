@@ -328,10 +328,6 @@ class MainActivity : ThemedActivity(),
                 return false
             }
             R.id.nav_about -> displayFragment(AboutFragment())
-            R.id.nav_tuiguang -> {
-                launchCustomTab("https://matsuricom.github.io/")
-                return false
-            }
             else -> return false
         }
         navigation.menu.findItem(id).isChecked = true
