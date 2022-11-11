@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "e42cfaf8368d1f05db090cb399789997",
+    "identityHash": "767c937e84c7d7e4f4421670ccb2ef3c",
     "entities": [
       {
         "tableName": "proxy_groups",
@@ -408,7 +408,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e42cfaf8368d1f05db090cb399789997')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '767c937e84c7d7e4f4421670ccb2ef3c')"
     ]
   }
 }
