@@ -31,6 +31,8 @@ import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
+import io.nekohasekai.sagernet.fmt.hysteria.isMultiPort
+import io.nekohasekai.sagernet.fmt.hysteria.toUri
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
@@ -61,10 +63,7 @@ import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.isTLS
 import io.nekohasekai.sagernet.ui.profile.*
 import moe.matsuri.nya.Protocols
-import moe.matsuri.nya.neko.NekoBean
-import moe.matsuri.nya.neko.NekoSettingActivity
-import moe.matsuri.nya.neko.haveStandardLink
-import moe.matsuri.nya.neko.shareLink
+import moe.matsuri.nya.neko.*
 
 @Entity(
     tableName = "proxy_entities", indices = [Index("groupId", name = "groupId")]
@@ -265,7 +264,7 @@ data class ProxyEntity(
 
     fun haveStandardLink(): Boolean {
         return when (requireBean()) {
-            is HysteriaBean -> false
+            is HysteriaBean -> !(requireBean() as HysteriaBean).isMultiPort()
             is MieruBean -> false
             is TuicBean -> false
             is SSHBean -> false
@@ -285,7 +284,7 @@ data class ProxyEntity(
             is TrojanBean -> toUri()
             is TrojanGoBean -> toUri()
             is NaiveBean -> toUri()
-            is HysteriaBean -> toUniversalLink()
+            is HysteriaBean -> toUri()
             is MieruBean -> toUniversalLink()
             is TuicBean -> toUniversalLink()
             is SSHBean -> toUniversalLink()
