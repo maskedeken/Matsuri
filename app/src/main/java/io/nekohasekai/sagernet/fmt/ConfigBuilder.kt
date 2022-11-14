@@ -769,14 +769,8 @@ fun buildV2RayConfig(
                 }
 
                 pastEntity?.requireBean()?.apply {
-                    var serverAddr = serverAddress
-                    if (this is HysteriaBean && this.isMultiPort()) {
-                        serverAddr = serverAddress.substringBeforeLast(":")
-                    }
-
-                    // don't loopback
-                    if (currentDomainStrategy != "AsIs" && !serverAddr.isIpAddress()) {
-                        domainListDNSDirect.add("full:$serverAddr")
+                    if (currentDomainStrategy != "AsIs" && !serverAddress.isIpAddress()) {
+                        domainListDNSDirect.add("full:$serverAddress")
                     }
                 }
                 if (forTest) {
