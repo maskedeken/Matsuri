@@ -29,6 +29,14 @@
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="chrome"
+            app:entries="@array/trojan_go_fingerprint_entry"
+            app:entryValues="@array/trojan_go_fingerprint_value"
+            app:icon="@drawable/ic_baseline_fingerprint_24"
+            app:key="fingerprint"
+            app:title="@string/fingerprint"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="none"
             app:entries="@array/trojan_go_networks_entry"
             app:entryValues="@array/trojan_go_networks_value"

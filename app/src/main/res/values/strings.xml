@@ -516,4 +516,6 @@ Anyone can write advanced plugins, which can control Matsuri. please download an
     <string name="tuic_congestion_controller">Congestion Controller</string>
     <string name="tuic_disable_sni">Disable SNI</string>
     <string name="tuic_reduce_rtt">Reduce RTT</string>
+
+    <string name="fingerprint">Fingerprint</string>
 </resources>

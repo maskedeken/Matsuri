@@ -308,6 +308,26 @@
         <item>CHACHA20-IETF-POLY1305</item>
     </string-array>
 
+    <string-array name="trojan_go_fingerprint_entry">
+        <item>Chrome</item>
+        <item>Firefox</item>
+        <item>Edge</item>
+        <item>Safari</item>
+        <item>iOS</item>
+        <item>360Browser</item>
+        <item>QQBrowser</item>
+    </string-array>
+
+    <string-array name="trojan_go_fingerprint_value">
+        <item>chrome</item>
+        <item>firefox</item>
+        <item>edge</item>
+        <item>safari</item>
+        <item>ios</item>
+        <item>360browser</item>
+        <item>qqbrowser</item>
+    </string-array>
+
     <string-array name="tcp_headers_value">
         <item>none</item>
         <item>http</item>

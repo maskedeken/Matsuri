@@ -197,6 +197,8 @@ object Key {
     const val NEKO_PLUGIN_MANAGED = "nekoPlugins"
     const val EXE_PREFER_PROVIDER = "exePreferProvider"
     const val APP_TLS_VERSION = "appTLSVersion"
+
+    const val FINGERPRINT = "fingerprint"
 }
 
 object TunImplementation {

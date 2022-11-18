@@ -303,6 +303,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
 
+    var fingerprint by profileCacheStore.string(Key.FINGERPRINT)
+
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
             Key.PROFILE_ID -> if (directBootAware) DirectBoot.update()

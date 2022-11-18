@@ -103,6 +103,11 @@ public class TrojanGoBean extends AbstractBean {
      */
     public String plugin;
 
+    /**
+     * 指纹
+     */
+    public String fingerprint;
+
     @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
@@ -114,11 +119,12 @@ public class TrojanGoBean extends AbstractBean {
         if (path == null) path = "";
         if (JavaUtil.isNullOrBlank(encryption)) encryption = "none";
         if (plugin == null) plugin = "";
+        if (fingerprint == null) fingerprint = "chrome";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(password);
         output.writeString(sni);
@@ -133,6 +139,7 @@ public class TrojanGoBean extends AbstractBean {
         }
         output.writeString(encryption);
         output.writeString(plugin);
+        output.writeString(fingerprint);
     }
 
     @Override
@@ -153,6 +160,10 @@ public class TrojanGoBean extends AbstractBean {
         }
         encryption = input.readString();
         plugin = input.readString();
+
+        if (version >= 2) {
+            fingerprint = input.readString();
+        }
     }
 
     @NotNull
