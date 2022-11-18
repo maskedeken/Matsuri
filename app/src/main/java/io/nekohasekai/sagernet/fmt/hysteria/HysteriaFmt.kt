@@ -191,10 +191,13 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
 
         // hy 1.2.0 （不兼容）
         put("resolver", "udp://127.0.0.1:" + DataStore.localDNSPort)
+
+        put("hop_interval", hopInterval)
     }.toStringPretty()
 }
 
 fun HysteriaBean.isMultiPort(): Boolean {
+    if (!serverAddress.contains(":")) return false;
     val p = serverAddress.substringAfterLast(":")
     if (p.contains("-") || p.contains(",")) return true;
     return false

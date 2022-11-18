@@ -471,4 +471,7 @@
     <string name="create_shortcut">创建快捷方式</string>
 
     <string name="fingerprint">指纹</string>
+
+    <string name="hop_interval">端口跳跃间隔</string>
+    <string name="dns_network">DNS 查询类型</string>
 </resources>

@@ -128,6 +128,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING) { true }
     var enableFakeDns by configurationStore.boolean(Key.ENABLE_FAKEDNS)
     var hosts by configurationStore.string(Key.DNS_HOSTS)
+    var dnsNetwork by configurationStore.stringSet(Key.DNS_NETWORK)
 
     var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY) { true }
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
@@ -257,6 +258,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverConnectionReceiveWindow by profileCacheStore.stringToIntIfExists(Key.SERVER_CONNECTION_RECEIVE_WINDOW)
     var serverMTU by profileCacheStore.stringToInt(Key.SERVER_MTU) { 1420 }
     var serverDisableMtuDiscovery by profileCacheStore.boolean(Key.SERVER_DISABLE_MTU_DISCOVERY)
+    var serverHopInterval by profileCacheStore.stringToInt(Key.SERVER_HOP_INTERVAL) { 10 }
 
     var serverProtocolVersion by profileCacheStore.stringToInt(Key.SERVER_PROTOCOL)
     var serverPrivateKey by profileCacheStore.string(Key.SERVER_PRIVATE_KEY)
