@@ -30,7 +30,6 @@ import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeLi
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.database.preference.RoomPreferenceDataStore
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.utils.DirectBoot
 import moe.matsuri.nya.TempDatabase
 
 object DataStore : OnPreferenceDataStoreChangeListener {
@@ -44,10 +43,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     fun init() {
         if (Build.VERSION.SDK_INT >= 24) {
-            SagerNet.deviceStorage.moveDatabaseFrom(SagerNet.application, Key.DB_PUBLIC)
-        }
-        if (Build.VERSION.SDK_INT >= 24 && directBootAware && SagerNet.user.isUserUnlocked) {
-            DirectBoot.flushTrafficStats()
+            SagerNet.application.moveDatabaseFrom(SagerNet.deviceStorage, Key.DB_PUBLIC)
         }
     }
 
@@ -136,6 +132,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var logBufSize by configurationStore.int(Key.LOG_BUF_SIZE) { 0 }
     var enablePcap by configurationStore.boolean(Key.ENABLE_PCAP)
     var acquireWakeLock by configurationStore.boolean(Key.ACQUIRE_WAKE_LOCK)
+    var showBottomBar by configurationStore.boolean(Key.SHOW_BOTTOM_BAR)
 
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat
     private val userIndex by lazy { Binder.getCallingUserHandle().hashCode() }
@@ -185,10 +182,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var bypass by configurationStore.boolean(Key.BYPASS_MODE) { true }
     var individual by configurationStore.string(Key.INDIVIDUAL)
     var showDirectSpeed by configurationStore.boolean(Key.SHOW_DIRECT_SPEED) { true }
-
-    val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { false }
-    val canToggleLocked: Boolean get() = configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
-    val directBootAware: Boolean get() = SagerNet.directBootSupported && canToggleLocked
 
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP) { true }
     var appendHttpProxy by configurationStore.boolean(Key.APPEND_HTTP_PROXY) { true }
@@ -308,8 +301,5 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var fingerprint by profileCacheStore.string(Key.FINGERPRINT)
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
-        when (key) {
-            Key.PROFILE_ID -> if (directBootAware) DirectBoot.update()
-        }
     }
 }

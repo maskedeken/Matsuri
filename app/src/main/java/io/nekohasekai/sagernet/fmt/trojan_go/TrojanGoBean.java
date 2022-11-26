@@ -103,6 +103,9 @@ public class TrojanGoBean extends AbstractBean {
      */
     public String plugin;
 
+    // ---
+
+    public Boolean allowInsecure;
     /**
      * 指纹
      */
@@ -119,6 +122,7 @@ public class TrojanGoBean extends AbstractBean {
         if (path == null) path = "";
         if (JavaUtil.isNullOrBlank(encryption)) encryption = "none";
         if (plugin == null) plugin = "";
+        if (allowInsecure == null) allowInsecure = false;
         if (fingerprint == null) fingerprint = "chrome";
     }
 
@@ -139,6 +143,7 @@ public class TrojanGoBean extends AbstractBean {
         }
         output.writeString(encryption);
         output.writeString(plugin);
+        output.writeBoolean(allowInsecure);
         output.writeString(fingerprint);
     }
 
@@ -160,9 +165,21 @@ public class TrojanGoBean extends AbstractBean {
         }
         encryption = input.readString();
         plugin = input.readString();
+        if (version >= 1) {
+            allowInsecure = input.readBoolean();
+        }
 
         if (version >= 2) {
             fingerprint = input.readString();
+        }
+    }
+
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof TrojanGoBean)) return;
+        TrojanGoBean bean = ((TrojanGoBean) other);
+        if (allowInsecure) {
+            bean.allowInsecure = true;
         }
     }
 

@@ -26,9 +26,6 @@ object Key {
     const val DB_PUBLIC = "configuration.db"
     const val DB_PROFILE = "sager_net.db"
 
-    const val PERSIST_ACROSS_REBOOT = "isAutoConnect"
-    const val DIRECT_BOOT_AWARE = "directBootAware"
-
     const val APP_EXPERT = "isExpert"
     const val APP_THEME = "appTheme"
     const val NIGHT_THEME = "nightTheme"
@@ -89,6 +86,7 @@ object Key {
     const val TUN_IMPLEMENTATION = "tunImplementation"
     const val ENABLE_PCAP = "enablePcap"
     const val ACQUIRE_WAKE_LOCK = "acquireWakeLock"
+    const val SHOW_BOTTOM_BAR = "showBottomBar"
 
     const val APP_TRAFFIC_STATISTICS = "appTrafficStatistics"
     const val PROFILE_TRAFFIC_STATISTICS = "profileTrafficStatistics"
