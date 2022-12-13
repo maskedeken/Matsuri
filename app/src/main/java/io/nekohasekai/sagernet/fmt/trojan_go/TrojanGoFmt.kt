@@ -140,6 +140,7 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
         put("ssl", JSONObject().apply {
             if (sni.isNotBlank()) put("sni", sni)
             if (fingerprint.isNotBlank()) put("fingerprint", fingerprint)
+            if (allowInsecure) put("verify", false)
         })
 
         when {
