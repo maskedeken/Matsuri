@@ -522,12 +522,5 @@ Anyone can write advanced plugins, which can control Matsuri. please download an
     <string name="dns_network">DNS query type</string>
     <string name="show_bottom_bar">Show bottom bar like SagerNet</string>
     <string name="utls_fingerprint">uTLS fingerprint</string>
-
-    <string name="tuic_token">Token</string>
-    <string name="tuic_udp_relay_mode">UDP Relay Mode</string>
-    <string name="tuic_congestion_controller">Congestion Controller</string>
-    <string name="tuic_disable_sni">Disable SNI</string>
-    <string name="tuic_reduce_rtt">Reduce RTT</string>
-
     <string name="fingerprint">Fingerprint</string>
 </resources>
