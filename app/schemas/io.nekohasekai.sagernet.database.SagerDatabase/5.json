@@ -178,7 +178,6 @@
             "affinity": "BLOB",
             "notNull": false
           },
-          {
             "fieldPath": "mieruBean",
             "columnName": "mieruBean",
             "affinity": "BLOB",

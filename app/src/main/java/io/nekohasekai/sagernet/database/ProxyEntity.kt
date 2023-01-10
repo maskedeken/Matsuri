@@ -205,6 +205,7 @@ data class ProxyEntity(
             TYPE_TUIC -> tuicBean = KryoConverters.tuicDeserialize(byteArray)
             TYPE_SSH -> sshBean = KryoConverters.sshDeserialize(byteArray)
             TYPE_WG -> wgBean = KryoConverters.wireguardDeserialize(byteArray)
+            TYPE_TUIC -> tuicBean = KryoConverters.tuicDeserialize(byteArray)
 
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
             TYPE_NEKO -> nekoBean = KryoConverters.nekoDeserialize(byteArray)
@@ -248,6 +249,7 @@ data class ProxyEntity(
             TYPE_TUIC -> tuicBean
             TYPE_SSH -> sshBean
             TYPE_WG -> wgBean
+            TYPE_TUIC -> tuicBean
 
             TYPE_CHAIN -> chainBean
             TYPE_NEKO -> nekoBean
@@ -264,7 +266,6 @@ data class ProxyEntity(
 
     fun haveStandardLink(): Boolean {
         return when (requireBean()) {
-            is HysteriaBean -> !(requireBean() as HysteriaBean).isMultiPort()
             is MieruBean -> false
             is TuicBean -> false
             is SSHBean -> false
@@ -289,6 +290,7 @@ data class ProxyEntity(
             is TuicBean -> toUniversalLink()
             is SSHBean -> toUniversalLink()
             is WireGuardBean -> toUniversalLink()
+            is TuicBean -> toUniversalLink()
             is NekoBean -> shareLink()
             else -> null
         }
@@ -344,6 +346,7 @@ data class ProxyEntity(
             TYPE_MIERU -> true
             TYPE_TUIC -> true
             TYPE_WG -> true
+            TYPE_TUIC -> true
             TYPE_NEKO -> true
             else -> false
         }
@@ -380,6 +383,7 @@ data class ProxyEntity(
         tuicBean = null
         sshBean = null
         wgBean = null
+        tuicBean = null
 
         chainBean = null
 
@@ -436,6 +440,10 @@ data class ProxyEntity(
                 type = TYPE_WG
                 wgBean = bean
             }
+            is TuicBean -> {
+                type = TYPE_TUIC
+                tuicBean = bean
+            }
             is ChainBean -> {
                 type = TYPE_CHAIN
                 chainBean = bean
@@ -465,6 +473,7 @@ data class ProxyEntity(
                 TYPE_TUIC -> TuicSettingsActivity::class.java
                 TYPE_SSH -> SSHSettingsActivity::class.java
                 TYPE_WG -> WireGuardSettingsActivity::class.java
+                TYPE_TUIC -> TuicSettingsActivity::class.java
 
                 TYPE_CHAIN -> ChainSettingsActivity::class.java
                 TYPE_NEKO -> NekoSettingActivity::class.java

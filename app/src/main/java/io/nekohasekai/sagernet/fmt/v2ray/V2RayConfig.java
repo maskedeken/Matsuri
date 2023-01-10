@@ -67,14 +67,13 @@ public class V2RayConfig {
             public String address;
             public Integer port;
             public String clientIp;
-            public Boolean skipFallback;
+            public String fallbackStrategy;
+            public String queryStrategy;
             public List<String> domains;
             public List<String> expectIPs;
 
             // Matsuri private
             public List<Integer> uidList;
-            public Boolean noV4;
-            public Boolean noV6;
         }
 
         public static class StringOrServerObject extends JsonOr<String, ServerObject> {
@@ -84,15 +83,9 @@ public class V2RayConfig {
         }
 
         public String clientIp;
-        public Boolean disableCache;
         public String tag;
-        public List<String> domains;
-        public List<String> expectIPs;
+        public String fallbackStrategy;
         public String queryStrategy;
-
-        public Boolean disableFallback;
-        public Boolean disableFallbackIfMatch;
-
     }
 
     public RoutingObject routing;
@@ -223,15 +216,6 @@ public class V2RayConfig {
                     return HTTPInboundConfigurationObject.class;
                 case "socks":
                     return SocksInboundConfigurationObject.class;
-                case "vmess":
-                    return VMessInboundConfigurationObject.class;
-                case "vless":
-                    return VLESSInboundConfigurationObject.class;
-                case "shadowsocks":
-                    return ShadowsocksInboundConfigurationObject.class;
-                case "trojan":
-                    return TrojanInboundConfigurationObject.class;
-
             }
             return null;
         }
@@ -281,101 +265,6 @@ public class V2RayConfig {
 
             public String user;
             public String pass;
-
-        }
-
-    }
-
-    public static class VMessInboundConfigurationObject implements InboundConfigurationObject {
-
-        public List<ClientObject> clients;
-        @SerializedName("default")
-        public DefaultObject defaultObject;
-        public DetourObject detour;
-        public Boolean disableInsecureEncryption;
-
-
-        public static class ClientObject {
-
-            public String id;
-            public Integer level;
-            public Integer alterId;
-            public String email;
-
-        }
-
-        public static class DefaultObject {
-
-            public Integer level;
-            public Integer alterId;
-
-        }
-
-        public static class DetourObject {
-
-            public String to;
-
-        }
-
-    }
-
-    public static class VLESSInboundConfigurationObject implements InboundConfigurationObject {
-
-        public List<ClientObject> clients;
-        public String decryption;
-        public List<FallbackObject> fallbacks;
-
-        public static class ClientObject {
-
-            public String id;
-            public Integer level;
-            public String email;
-
-        }
-
-        public static class FallbackObject {
-
-            public String alpn;
-            public String path;
-            public Integer dest;
-            public Integer xver;
-
-        }
-
-    }
-
-    public static class ShadowsocksInboundConfigurationObject implements InboundConfigurationObject {
-
-        public String email;
-        public String method;
-        public String password;
-        public Integer level;
-        public String network;
-        public String plugin;
-        public String pluginOpts;
-        public List<String> pluginArgs;
-
-    }
-
-    public static class TrojanInboundConfigurationObject implements InboundConfigurationObject {
-
-        public List<ClientObject> clients;
-        public List<FallbackObject> fallbacks;
-
-        public static class ClientObject {
-
-            public String password;
-            public String email;
-            public Integer level;
-
-        }
-
-        public static class FallbackObject {
-
-            public String alpn;
-            public String path;
-            public Integer dest;
-            public Integer xver;
 
         }
 
@@ -677,6 +566,7 @@ public class V2RayConfig {
         public String network;
         public String security;
         public TLSObject tlsSettings;
+        public UTLSObject utlsSettings;
         public TcpObject tcpSettings;
         public KcpObject kcpSettings;
         public WebSocketObject wsSettings;
@@ -705,6 +595,7 @@ public class V2RayConfig {
         public String serverName;
         public Boolean allowInsecure;
         public List<String> alpn;
+        public List<String> nextProtocol; // v5 alpn
         public List<CertificateObject> certificates;
         public Boolean disableSystemRoot;
         public List<String> pinnedPeerCertificateChainSha256;
@@ -712,12 +603,17 @@ public class V2RayConfig {
         public static class CertificateObject {
 
             public String usage;
-            public String certificateFile;
-            public String keyFile;
             public List<String> certificate;
             public List<String> key;
 
         }
+
+    }
+
+    public static class UTLSObject {
+
+        public String imitate;
+        public TLSObject tlsConfig;
 
     }
 

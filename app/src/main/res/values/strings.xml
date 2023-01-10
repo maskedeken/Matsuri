@@ -223,6 +223,7 @@
     <string name="action_tuic" translatable="false">TUIC</string>
     <string name="action_ssh" translatable="false">SSH</string>
     <string name="action_wireguard" translatable="false">WireGuard</string>
+    <string name="action_tuic" translatable="false">TUIC</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="balancer">Balancer</string>
@@ -499,6 +500,14 @@
     <string name="acquire_wake_lock_summary">Keep the CPU on</string>
     <string name="action_switch">Switch</string>
 
+    <string name="tuic_token">Token</string>
+    <string name="tuic_udp_relay_mode">UDP Relay Mode</string>
+    <string name="tuic_congestion_controller">Congestion Controller</string>
+    <string name="tuic_disable_sni">Disable SNI</string>
+    <string name="tuic_reduce_rtt">Enable 0-RTT QUIC handshake</string>
+    <string name="tuic_fast_connect">TCP Fast Connect</string>
+    <string name="tuic_fast_connect_summary">Requires plugin and server support</string>
+
     <string name="please_update">Your Matsuri is too old (%s). And will stop working at %s. Please update!</string>
     <string name="please_update_force">Your Matsuri is too old (%s). And has been stopped working at %s. Please update!</string>
     <string name="connection_test_delete_unavailable">Clear unavailable</string>
@@ -513,6 +522,7 @@ Anyone can write advanced plugins, which can control Matsuri. please download an
     <string name="hop_interval">Port Hopping Interval(second)</string>
     <string name="dns_network">DNS query type</string>
     <string name="show_bottom_bar">Show bottom bar like SagerNet</string>
+    <string name="utls_fingerprint">uTLS fingerprint</string>
 
     <string name="tuic_token">Token</string>
     <string name="tuic_udp_relay_mode">UDP Relay Mode</string>

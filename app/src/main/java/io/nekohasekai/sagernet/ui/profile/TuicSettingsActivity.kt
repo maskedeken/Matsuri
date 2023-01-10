@@ -20,9 +20,11 @@
 package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
+import android.widget.Switch
 import androidx.preference.EditTextPreference
 import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
+import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
@@ -46,7 +48,8 @@ class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
         DataStore.serverSNI = sni
         DataStore.serverReduceRTT = reduceRTT
         DataStore.serverMTU = mtu
-
+        DataStore.serverFastConnect = fastConnect
+        DataStore.serverAllowInsecure = allowInsecure
     }
 
     override fun TuicBean.serialize() {
@@ -62,6 +65,8 @@ class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
         sni = DataStore.serverSNI
         reduceRTT = DataStore.serverReduceRTT
         mtu = DataStore.serverMTU
+        fastConnect = DataStore.serverFastConnect
+        allowInsecure = DataStore.serverAllowInsecure
     }
 
     override fun PreferenceFragmentCompat.createPreferences(

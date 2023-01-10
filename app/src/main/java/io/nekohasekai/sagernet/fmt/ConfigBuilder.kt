@@ -38,6 +38,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
+import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
@@ -135,14 +136,13 @@ fun buildV2RayConfig(
     val alerts = mutableListOf<Pair<Int, String>>()
 
     return V2RayConfig().apply {
-
         dns = DnsObject().apply {
+            fallbackStrategy = "disabled_if_any_match"
+
             hosts = DataStore.hosts.split("\n")
                 .filter { it.isNotBlank() }
                 .associate { it.substringBefore(" ") to it.substringAfter(" ") }
                 .toMutableMap()
-
-            disableFallbackIfMatch = true
 
             if (useFakeDns) {
                 fakedns = mutableListOf()
@@ -521,9 +521,11 @@ fun buildV2RayConfig(
 
                             streamSettings = StreamSettingsObject().apply {
                                 network = bean.type
+
                                 if (bean.security.isNotBlank()) {
                                     security = bean.security
                                 }
+                                val v5_utls = bean.utlsFingerprint.isNotBlank()
                                 if (security == "tls") {
                                     tlsSettings = TLSObject().apply {
                                         if (bean.sni.isNotBlank()) {
@@ -531,29 +533,43 @@ fun buildV2RayConfig(
                                         }
 
                                         if (bean.alpn.isNotBlank()) {
-                                            alpn = bean.alpn.split("\n")
+                                            val ds = bean.alpn.split("\n")
+                                                .filter { it.isNotBlank() }
+                                            if (v5_utls) {
+                                                nextProtocol = ds
+                                            } else {
+                                                alpn = ds
+                                            }
                                         }
 
                                         if (bean.certificates.isNotBlank()) {
                                             disableSystemRoot = true
                                             certificates = listOf(TLSObject.CertificateObject()
                                                 .apply {
-                                                    usage = "verify"
-                                                    certificate = bean.certificates.split(
-                                                        "\n"
-                                                    ).filter { it.isNotBlank() }
+                                                    usage =
+                                                        if (v5_utls) "ENCIPHERMENT" else "verify"
+                                                    certificate = bean.certificates.split("\n")
+                                                        .filter { it.isNotBlank() }
                                                 })
                                         }
 
                                         if (bean.pinnedPeerCertificateChainSha256.isNotBlank()) {
-                                            pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.split(
-                                                "\n"
-                                            ).filter { it.isNotBlank() }
+                                            pinnedPeerCertificateChainSha256 =
+                                                bean.pinnedPeerCertificateChainSha256.split("\n")
+                                                    .filter { it.isNotBlank() }
                                         }
 
                                         if (bean.allowInsecure) {
                                             allowInsecure = true
                                         }
+                                    }
+                                    if (v5_utls) {
+                                        utlsSettings = UTLSObject().apply {
+                                            imitate = bean.utlsFingerprint
+                                            tlsConfig = tlsSettings
+                                        }
+                                        tlsSettings = null
+                                        security = "utls"
                                     }
                                 }
 
@@ -791,12 +807,11 @@ fun buildV2RayConfig(
                         val pluginId = when (bean) {
                             is HysteriaBean -> "hysteria-plugin"
                             is WireGuardBean -> "wireguard-plugin"
+                            is TuicBean -> "tuic-plugin"
                             else -> ""
                         }
-                        Plugins.getPlugin(pluginId)?.apply {
-                            if (authority.startsWith(Plugins.AUTHORITIES_PREFIX_NEKO_EXE)) {
-                                needExternal = false
-                            }
+                        if (Plugins.isUsingMatsuriExe(pluginId)) {
+                            needExternal = false
                         }
                     }
                     if (needExternal) {
@@ -1060,7 +1075,6 @@ fun buildV2RayConfig(
                     valueY = DnsObject.ServerObject().apply {
                         address = it.replace("https://", "https+local://")
                         domains = directLookupDomain.toList()
-                        skipFallback = true
                         uidList = uidListDNSDirect.toHashSet().toList()
                         applyDNSNetworkSettings(true)
                     }

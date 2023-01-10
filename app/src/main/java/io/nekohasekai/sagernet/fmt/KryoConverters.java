@@ -155,6 +155,12 @@ public class KryoConverters {
     }
 
     @TypeConverter
+    public static TuicBean tuicDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new TuicBean(), bytes);
+    }
+
+    @TypeConverter
     public static ChainBean chainDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new ChainBean(), bytes);
