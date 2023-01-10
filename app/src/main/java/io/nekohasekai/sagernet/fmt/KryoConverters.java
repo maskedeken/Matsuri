@@ -137,12 +137,6 @@ public class KryoConverters {
     }
 
     @TypeConverter
-    public static TuicBean tuicDeserialize(byte[] bytes) {
-        if (JavaUtil.isEmpty(bytes)) return null;
-        return deserialize(new TuicBean(), bytes);
-    }
-
-    @TypeConverter
     public static SSHBean sshDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new SSHBean(), bytes);
