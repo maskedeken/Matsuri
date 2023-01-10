@@ -52,11 +52,6 @@ enum class PluginEntry(
         SagerNet.application.getString(R.string.action_mieru),
         "io.nekohasekai.sagernet.plugin.mieru"
     ),
-    TUIC(
-        "tuic-plugin",
-        SagerNet.application.getString(R.string.action_tuic),
-        "io.nekohasekai.sagernet.plugin.tuic"
-    ),
     WireGuard(
         "wireguard-plugin",
         SagerNet.application.getString(R.string.action_wireguard),
