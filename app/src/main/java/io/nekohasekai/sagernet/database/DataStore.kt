@@ -298,6 +298,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
 
     var fingerprint by profileCacheStore.string(Key.FINGERPRINT)
+    var fastOpen by profileCacheStore.boolean(Key.FAST_OPEN)
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
     }

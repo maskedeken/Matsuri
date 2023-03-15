@@ -57,6 +57,8 @@ public class HysteriaBean extends AbstractBean {
     public Boolean disableMtuDiscovery;
     public Integer hopInterval;
 
+    public Boolean fastOpen;
+
     @Override
     public boolean canMapping() {
         return protocol != PROTOCOL_FAKETCP;
@@ -81,11 +83,13 @@ public class HysteriaBean extends AbstractBean {
         if (connectionReceiveWindow == null) connectionReceiveWindow = 0;
         if (disableMtuDiscovery == null) disableMtuDiscovery = false;
         if (hopInterval == null) hopInterval = 10;
+
+        if (fastOpen == null) fastOpen = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(5);
+        output.writeInt(6);
         super.serialize(output);
         output.writeInt(authPayloadType);
         output.writeString(authPayload);
@@ -104,6 +108,7 @@ public class HysteriaBean extends AbstractBean {
         output.writeBoolean(disableMtuDiscovery);
         output.writeInt(hopInterval);
 
+        output.writeBoolean(fastOpen);
     }
 
     @Override
@@ -132,6 +137,9 @@ public class HysteriaBean extends AbstractBean {
         if (version >= 5) {
             hopInterval = input.readInt();
         }
+        if (version >= 6) {
+            fastOpen = input.readBoolean();
+        }
     }
 
     @Override
@@ -143,6 +151,7 @@ public class HysteriaBean extends AbstractBean {
         bean.allowInsecure = allowInsecure;
         bean.disableMtuDiscovery = disableMtuDiscovery;
         bean.hopInterval = hopInterval;
+        bean.fastOpen = fastOpen;
     }
 
     @Override

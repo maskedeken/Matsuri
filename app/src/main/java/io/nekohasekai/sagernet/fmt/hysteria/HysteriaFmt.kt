@@ -151,6 +151,8 @@ fun JSONObject.parseHysteria(): HysteriaBean {
         streamReceiveWindow = getIntNya("recv_window_conn")
         connectionReceiveWindow = getIntNya("recv_window")
         disableMtuDiscovery = getBool("disable_mtu_discovery")
+
+        fastOpen = getBool("fast_open")
     }
 }
 
@@ -202,6 +204,8 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
         put("resolver", "udp://127.0.0.1:" + DataStore.localDNSPort)
 
         put("hop_interval", hopInterval)
+
+        if (fastOpen) put("fast_open", true)
     }.toStringPretty()
 }
 

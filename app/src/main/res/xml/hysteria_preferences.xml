@@ -92,6 +92,10 @@
             app:key="hopInterval"
             app:title="@string/hop_interval"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_flight_takeoff_24"
+            app:key="fastOpen"
+            app:title="@string/hysteria_fast_open" />
     </PreferenceCategory>
 
 </PreferenceScreen> 

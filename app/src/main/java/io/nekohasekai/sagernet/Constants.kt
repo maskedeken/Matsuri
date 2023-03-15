@@ -198,6 +198,7 @@ object Key {
     const val APP_TLS_VERSION = "appTLSVersion"
 
     const val FINGERPRINT = "fingerprint"
+    const val FAST_OPEN = "fastOpen"
 }
 
 object TunImplementation {
