@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.fmt.hysteria
 
+import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
@@ -202,6 +203,12 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
 
         // hy 1.2.0 （不兼容）
         put("resolver", "udp://127.0.0.1:" + DataStore.localDNSPort)
+        put("resolve_preference", when(DataStore.ipv6Mode) {
+            IPv6Mode.ENABLE -> "46"
+            IPv6Mode.PREFER -> "64"
+            IPv6Mode.ONLY -> "6"
+            else -> "4"
+        })
 
         put("hop_interval", hopInterval)
 
