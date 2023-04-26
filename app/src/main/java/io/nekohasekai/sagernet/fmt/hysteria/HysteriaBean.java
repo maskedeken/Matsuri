@@ -162,6 +162,11 @@ public class HysteriaBean extends AbstractBean {
         return super.displayAddress();
     }
 
+    @Override
+    public boolean canTCPing() {
+        return false;
+    }
+
     @NotNull
     @Override
     public HysteriaBean clone() {

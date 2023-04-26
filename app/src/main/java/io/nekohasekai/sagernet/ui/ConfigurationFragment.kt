@@ -64,7 +64,6 @@ import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
 import io.nekohasekai.sagernet.databinding.LayoutProgressListBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.toUniversalLink
-import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
 import io.nekohasekai.sagernet.group.RawUpdater
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
@@ -82,7 +81,6 @@ import moe.matsuri.nya.neko.NekoJSInterface
 import moe.matsuri.nya.neko.NekoPluginManager
 import moe.matsuri.nya.neko.NekoSettingActivity
 import moe.matsuri.nya.neko.canShare
-import moe.matsuri.nya.utils.JavaUtil
 import okhttp3.internal.closeQuietly
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -266,7 +264,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (fileName != null && fileName.endsWith(".zip")) {
                     // try parse wireguard zip
 
-                    val zip = ZipInputStream(requireContext().contentResolver.openInputStream(file)!!)
+                    val zip =
+                        ZipInputStream(requireContext().contentResolver.openInputStream(file)!!)
                     while (true) {
                         val entry = zip.nextEntry ?: break
                         if (entry.isDirectory) continue
@@ -318,6 +317,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_scan_qr_code -> {
                 startActivity(Intent(context, ScannerActivity::class.java))
             }
+
             R.id.action_import_clipboard -> {
                 val text = SagerNet.getClipboardText()
                 if (text.isBlank()) {
@@ -339,33 +339,43 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
             }
+
             R.id.action_import_file -> {
                 startFilesForResult(importFile, "*/*")
             }
+
             R.id.action_new_socks -> {
                 startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java))
             }
+
             R.id.action_new_http -> {
                 startActivity(Intent(requireActivity(), HttpSettingsActivity::class.java))
             }
+
             R.id.action_new_ss -> {
                 startActivity(Intent(requireActivity(), ShadowsocksSettingsActivity::class.java))
             }
+
             R.id.action_new_ssr -> {
                 startActivity(Intent(requireActivity(), ShadowsocksRSettingsActivity::class.java))
             }
+
             R.id.action_new_vmess -> {
                 startActivity(Intent(requireActivity(), VMessSettingsActivity::class.java))
             }
+
             R.id.action_new_trojan -> {
                 startActivity(Intent(requireActivity(), TrojanSettingsActivity::class.java))
             }
+
             R.id.action_new_trojan_go -> {
                 startActivity(Intent(requireActivity(), TrojanGoSettingsActivity::class.java))
             }
+
             R.id.action_new_naive -> {
                 startActivity(Intent(requireActivity(), NaiveSettingsActivity::class.java))
             }
+
             R.id.action_new_hysteria -> {
                 startActivity(Intent(requireActivity(), HysteriaSettingsActivity::class.java))
             }
@@ -375,15 +385,19 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_tuic -> {
                 startActivity(Intent(requireActivity(), TuicSettingsActivity::class.java))
             }
+
             R.id.action_new_ssh -> {
                 startActivity(Intent(requireActivity(), SSHSettingsActivity::class.java))
             }
+
             R.id.action_new_wg -> {
                 startActivity(Intent(requireActivity(), WireGuardSettingsActivity::class.java))
             }
+
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }
+
             R.id.action_new_neko -> {
                 val context = requireContext()
                 lateinit var dialog: AlertDialog
@@ -415,6 +429,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     .setView(linearLayout)
                     .show()
             }
+
             R.id.action_clear_traffic_statistics -> {
                 runOnDefaultDispatcher {
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
@@ -431,6 +446,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
             }
+
             R.id.action_connection_test_clear_results -> {
                 runOnDefaultDispatcher {
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
@@ -448,6 +464,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
             }
+
             R.id.action_connection_test_delete_unavailable -> {
                 runOnDefaultDispatcher {
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
@@ -486,15 +503,71 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
             }
+
+            R.id.action_remove_duplicate -> {
+                runOnDefaultDispatcher {
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
+                    val toClear = mutableListOf<ProxyEntity>()
+                    val uniqueProxies = LinkedHashSet<Protocols.Deduplication>()
+                    for (pf in profiles) {
+                        val proxy = Protocols.Deduplication(pf.requireBean(), pf.displayType())
+                        if (!uniqueProxies.add(proxy)) {
+                            toClear += pf
+                        }
+                    }
+                    if (toClear.isNotEmpty()) {
+                        onMainDispatcher {
+                            MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.confirm)
+                                .setMessage(
+                                    getString(R.string.delete_confirm_prompt) + "\n" +
+                                            toClear.mapIndexedNotNull { index, proxyEntity ->
+                                                if (index < 20) {
+                                                    proxyEntity.displayName()
+                                                } else if (index == 20) {
+                                                    "......"
+                                                } else {
+                                                    null
+                                                }
+                                            }.joinToString("\n")
+                                )
+                                .setPositiveButton(R.string.yes) { _, _ ->
+                                    for (profile in toClear) {
+                                        adapter.groupFragments[DataStore.selectedGroup]?.adapter?.apply {
+                                            val index = configurationIdList.indexOf(profile.id)
+                                            if (index >= 0) {
+                                                configurationIdList.removeAt(index)
+                                                configurationList.remove(profile.id)
+                                                notifyItemRemoved(index)
+                                            }
+                                        }
+                                    }
+                                    runOnDefaultDispatcher {
+                                        for (profile in toClear) {
+                                            ProfileManager.deleteProfile2(
+                                                profile.groupId, profile.id
+                                            )
+                                        }
+                                    }
+                                }
+                                .setNegativeButton(R.string.no, null)
+                                .show()
+                        }
+                    }
+                }
+            }
+
             R.id.action_connection_icmp_ping -> {
                 pingTest(true)
             }
+
             R.id.action_connection_tcp_ping -> {
                 pingTest(false)
             }
+
             R.id.action_connection_url_test -> {
                 urlTest()
             }
+
             R.id.action_filter_groups -> {
                 runOnDefaultDispatcher filter@{
                     val group = SagerDatabase.groupDao.getById(DataStore.currentGroupId())!!
@@ -540,6 +613,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 }
             }
+
             R.id.group_filter_owners -> {
                 runOnDefaultDispatcher filter@{
                     val group = SagerDatabase.groupDao.getById(DataStore.currentGroupId())!!
@@ -585,6 +659,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 }
             }
+
             R.id.action_filter_tags -> {
                 runOnDefaultDispatcher filter@{
                     val group = DataStore.currentGroup()
@@ -653,31 +728,38 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         suspend fun update(profile: ProxyEntity) {
             fragment?.configurationListView?.post {
+                val context = context ?: return@post
+                if (!isAdded) return@post
+
                 var profileStatusText: String? = null
                 var profileStatusColor = 0
 
                 when (profile.status) {
                     -1 -> {
                         profileStatusText = profile.error
-                        profileStatusColor = requireContext().getColorAttr(android.R.attr.textColorSecondary)
+                        profileStatusColor = context.getColorAttr(android.R.attr.textColorSecondary)
                     }
+
                     0 -> {
                         profileStatusText = getString(R.string.connection_test_testing)
-                        profileStatusColor = requireContext().getColorAttr(android.R.attr.textColorSecondary)
+                        profileStatusColor = context.getColorAttr(android.R.attr.textColorSecondary)
                     }
+
                     1 -> {
                         profileStatusText = getString(R.string.available, profile.ping)
-                        profileStatusColor = requireContext().getColour(R.color.material_green_500)
+                        profileStatusColor = context.getColour(R.color.material_green_500)
                     }
+
                     2 -> {
                         profileStatusText = profile.error
-                        profileStatusColor = requireContext().getColour(R.color.material_red_500)
+                        profileStatusColor = context.getColour(R.color.material_red_500)
                     }
+
                     3 -> {
                         val err = profile.error ?: ""
                         val msg = Protocols.genFriendlyMsg(err)
                         profileStatusText = if (msg != err) msg else getString(R.string.unavailable)
-                        profileStatusColor = requireContext().getColour(R.color.material_red_500)
+                        profileStatusColor = context.getColour(R.color.material_red_500)
                     }
                 }
 
@@ -686,7 +768,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     append("\n")
                     append(
                         profile.displayType(),
-                        ForegroundColorSpan(requireContext().getProtocolColor(profile.type)),
+                        ForegroundColorSpan(context.getProtocolColor(profile.type)),
                         SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                     append(" ")
@@ -709,6 +791,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         if (DataStore.serviceState.started) SagerNet.stopService()
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     @Suppress("EXPERIMENTAL_API_USAGE")
     fun pingTest(icmpPing: Boolean) {
         stopService()
@@ -722,10 +805,12 @@ class ConfigurationFragment @JvmOverloads constructor(
             if (group.subscription?.type == SubscriptionType.OOCv1) {
                 val subscription = group.subscription!!
                 if (subscription.selectedGroups.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().group in subscription.selectedGroups }
+                    profilesUnfiltered =
+                        profilesUnfiltered.filter { it.requireBean().group in subscription.selectedGroups }
                 }
                 if (subscription.selectedOwners.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().owner in subscription.selectedOwners }
+                    profilesUnfiltered =
+                        profilesUnfiltered.filter { it.requireBean().owner in subscription.selectedOwners }
                 }
                 if (subscription.selectedTags.isNotEmpty()) {
                     profilesUnfiltered = profilesUnfiltered.filter { profile ->
@@ -737,8 +822,11 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             test.proxyN = profilesUnfiltered.size
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
-            val testPool = newFixedThreadPoolContext(5, "Connection test pool")
-            repeat(5) {
+            val testPool = newFixedThreadPoolContext(
+                DataStore.connectionTestConcurrent,
+                "Connection test pool"
+            )
+            repeat(DataStore.connectionTestConcurrent) {
                 testJobs.add(launch(testPool) {
                     while (isActive) {
                         val profile = profiles.poll() ?: break
@@ -746,14 +834,16 @@ class ConfigurationFragment @JvmOverloads constructor(
                         if (icmpPing) {
                             if (!profile.requireBean().canICMPing()) {
                                 profile.status = -1
-                                profile.error = app.getString(R.string.connection_test_icmp_ping_unavailable)
+                                profile.error =
+                                    app.getString(R.string.connection_test_icmp_ping_unavailable)
                                 test.insert(profile)
                                 continue
                             }
                         } else {
                             if (!profile.requireBean().canTCPing()) {
                                 profile.status = -1
-                                profile.error = app.getString(R.string.connection_test_tcp_ping_unavailable)
+                                profile.error =
+                                    app.getString(R.string.connection_test_tcp_ping_unavailable)
                                 test.insert(profile)
                                 continue
                             }
@@ -822,14 +912,20 @@ class ConfigurationFragment @JvmOverloads constructor(
                             } else {
                                 profile.status = 2
                                 when {
-                                    !message.contains("failed:") -> profile.error = getString(R.string.connection_test_timeout)
+                                    !message.contains("failed:") -> profile.error =
+                                        getString(R.string.connection_test_timeout)
+
                                     else -> when {
                                         message.contains("ECONNREFUSED") -> {
-                                            profile.error = getString(R.string.connection_test_refused)
+                                            profile.error =
+                                                getString(R.string.connection_test_refused)
                                         }
+
                                         message.contains("ENETUNREACH") -> {
-                                            profile.error = getString(R.string.connection_test_unreachable)
+                                            profile.error =
+                                                getString(R.string.connection_test_unreachable)
                                         }
+
                                         else -> {
                                             profile.status = 3
                                             profile.error = message
@@ -880,10 +976,12 @@ class ConfigurationFragment @JvmOverloads constructor(
             if (group.subscription?.type == SubscriptionType.OOCv1) {
                 val subscription = group.subscription!!
                 if (subscription.selectedGroups.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().group in subscription.selectedGroups }
+                    profilesUnfiltered =
+                        profilesUnfiltered.filter { it.requireBean().group in subscription.selectedGroups }
                 }
                 if (subscription.selectedOwners.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().owner in subscription.selectedOwners }
+                    profilesUnfiltered =
+                        profilesUnfiltered.filter { it.requireBean().owner in subscription.selectedOwners }
                 }
                 if (subscription.selectedTags.isNotEmpty()) {
                     profilesUnfiltered = profilesUnfiltered.filter { profile ->
@@ -897,7 +995,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
             val urlTest = UrlTest() // note: this is NOT in bg process
 
-            repeat(5) {
+            repeat(DataStore.connectionTestConcurrent) {
                 testJobs.add(launch {
                     while (isActive) {
                         val profile = profiles.poll() ?: break
@@ -1162,9 +1260,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                 GroupOrder.ORIGIN -> {
                     origin.isChecked = true
                 }
+
                 GroupOrder.BY_NAME -> {
                     byName.isChecked = true
                 }
+
                 GroupOrder.BY_DELAY -> {
                     byDelay.isChecked = true
                 }
@@ -1413,16 +1513,20 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             override suspend fun onUpdated(profileId: Long, trafficStats: TrafficStats) {
-                val index = configurationIdList.indexOf(profileId)
-                if (index != -1) {
-                    val holder = layoutManager.findViewByPosition(index)
-                        ?.let { configurationListView.getChildViewHolder(it) } as ConfigurationHolder?
-                    if (holder != null) {
-                        holder.entity.stats = trafficStats
-                        onMainDispatcher {
-                            holder.bind(holder.entity)
+                try {
+                    val index = configurationIdList.indexOf(profileId)
+                    if (index != -1) {
+                        val holder = layoutManager.findViewByPosition(index)
+                            ?.let { configurationListView.getChildViewHolder(it) } as ConfigurationHolder?
+                        if (holder != null) {
+                            holder.entity.stats = trafficStats
+                            onMainDispatcher {
+                                holder.bind(holder.entity)
+                            }
                         }
                     }
+                } catch (e: Exception) {
+                    Logs.w(e)
                 }
             }
 
@@ -1458,10 +1562,12 @@ class ConfigurationFragment @JvmOverloads constructor(
                 val subscription = proxyGroup.subscription
                 if (subscription != null) {
                     if (subscription.selectedGroups.isNotEmpty()) {
-                        newProfiles = newProfiles.filter { it.requireBean().group in subscription.selectedGroups }
+                        newProfiles =
+                            newProfiles.filter { it.requireBean().group in subscription.selectedGroups }
                     }
                     if (subscription.selectedOwners.isNotEmpty()) {
-                        newProfiles = newProfiles.filter { it.requireBean().owner in subscription.selectedOwners }
+                        newProfiles =
+                            newProfiles.filter { it.requireBean().owner in subscription.selectedOwners }
                     }
                     if (subscription.selectedTags.isNotEmpty()) {
                         newProfiles = newProfiles.filter { profile ->
@@ -1476,8 +1582,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                         newProfiles = newProfiles.sortedBy { it.displayName() }
 
                     }
+
                     GroupOrder.BY_DELAY -> {
-                        newProfiles = newProfiles.sortedBy { if (it.status == 1) it.ping else 114514 }
+                        newProfiles =
+                            newProfiles.sortedBy { if (it.status == 1) it.ping else 114514 }
                     }
                 }
 
@@ -1603,7 +1711,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 profileAddress.text = address
-                (trafficText.parent as View).isGone = (!showTraffic || proxyEntity.status <= 0) && address.isBlank()
+                (trafficText.parent as View).isGone =
+                    (!showTraffic || proxyEntity.status <= 0) && address.isBlank()
 
                 if (proxyEntity.status <= 0) {
                     if (showTraffic) {
@@ -1659,7 +1768,8 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 runOnDefaultDispatcher {
                     val selected = (selectedItem?.id ?: DataStore.selectedProxy) == proxyEntity.id
-                    val started = selected && DataStore.serviceState.started && DataStore.currentProfile == proxyEntity.id
+                    val started =
+                        selected && DataStore.serviceState.started && DataStore.currentProfile == proxyEntity.id
                     onMainDispatcher {
                         editButton.isEnabled = !started
                         removeButton.isEnabled = !started
@@ -1670,11 +1780,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                         val popup = PopupMenu(requireContext(), anchor)
                         popup.menuInflater.inflate(R.menu.profile_share_menu, popup.menu)
 
-                        if (proxyEntity.vmessBean == null) {
-                            popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_v2rayn_qr)
-                            popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(R.id.action_v2rayn_clipboard)
-                        }
-
                         when {
                             !proxyEntity.haveStandardLink() -> {
                                 popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_standard_qr)
@@ -1682,6 +1787,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                     R.id.action_standard_clipboard
                                 )
                             }
+
                             !proxyEntity.haveLink() -> {
                                 popup.menu.removeItem(R.id.action_group_qr)
                                 popup.menu.removeItem(R.id.action_group_clipboard)
@@ -1715,6 +1821,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                         is ResultInsecure -> resources.openRawResource(
                                             validateResult.textRes
                                         ).bufferedReader().use { it.readText() }
+
                                         is ResultInsecureText -> validateResult.text
                                         else -> ""
                                     }
@@ -1732,6 +1839,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                         }
                                 }
                             }
+
                             is ResultDeprecated -> onMainDispatcher {
                                 shareLayout.isVisible = true
 
@@ -1756,6 +1864,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                         }
                                 }
                             }
+
                             else -> onMainDispatcher {
                                 shareLayer.setBackgroundColor(Color.TRANSPARENT)
                                 shareButton.setImageResource(R.drawable.ic_social_share)
@@ -1787,14 +1896,13 @@ class ConfigurationFragment @JvmOverloads constructor(
                 try {
                     currentName = entity.displayName()!!
                     when (item.itemId) {
-                        R.id.action_standard_qr -> showCode(entity.toLink()!!)
-                        R.id.action_standard_clipboard -> export(entity.toLink()!!)
+                        R.id.action_standard_qr -> showCode(entity.toStdLink()!!)
+                        R.id.action_standard_clipboard -> export(entity.toStdLink()!!)
                         R.id.action_universal_qr -> showCode(entity.requireBean().toUniversalLink())
                         R.id.action_universal_clipboard -> export(
                             entity.requireBean().toUniversalLink()
                         )
-                        R.id.action_v2rayn_qr -> showCode(entity.vmessBean!!.toV2rayN())
-                        R.id.action_v2rayn_clipboard -> export(entity.vmessBean!!.toV2rayN())
+
                         R.id.action_config_export_clipboard -> export(entity.exportConfig().first)
                         R.id.action_config_export_file -> {
                             val cfg = entity.exportConfig()
@@ -1815,27 +1923,28 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     }
 
-    private val exportConfig = registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
-        if (data != null) {
-            runOnDefaultDispatcher {
-                try {
-                    (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
-                        .bufferedWriter()
-                        .use {
-                            it.write(DataStore.serverConfig)
+    private val exportConfig =
+        registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
+            if (data != null) {
+                runOnDefaultDispatcher {
+                    try {
+                        (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
+                            .bufferedWriter()
+                            .use {
+                                it.write(DataStore.serverConfig)
+                            }
+                        onMainDispatcher {
+                            snackbar(getString(R.string.action_export_msg)).show()
                         }
-                    onMainDispatcher {
-                        snackbar(getString(R.string.action_export_msg)).show()
+                    } catch (e: Exception) {
+                        Logs.w(e)
+                        onMainDispatcher {
+                            snackbar(e.readableMessage).show()
+                        }
                     }
-                } catch (e: Exception) {
-                    Logs.w(e)
-                    onMainDispatcher {
-                        snackbar(e.readableMessage).show()
-                    }
-                }
 
+                }
             }
         }
-    }
 
 }

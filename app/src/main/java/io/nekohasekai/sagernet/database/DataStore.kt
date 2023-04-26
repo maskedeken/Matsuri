@@ -112,10 +112,11 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var mtu by configurationStore.stringToInt(Key.MTU) { 9000 }
 
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN)
-    var bypassLanInCoreOnly by configurationStore.boolean(Key.BYPASS_LAN_IN_CORE_ONLY)
+    var bypassLanInCore by configurationStore.boolean(Key.BYPASS_LAN_IN_CORE)
 
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
+    var showGroupInNotification by configurationStore.boolean("showGroupInNotification")
 
     var enhanceDomain by configurationStore.boolean(Key.ENHANCE_RESOLVE_SERVER_DOMAIN)
     var remoteDns by configurationStore.string(Key.REMOTE_DNS) { "https://8.8.8.8/dns-query" }
@@ -126,7 +127,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var hosts by configurationStore.string(Key.DNS_HOSTS)
     var dnsNetwork by configurationStore.stringSet(Key.DNS_NETWORK)
 
-    var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY) { true }
+    val securityAdvisory = false
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
     var enableLog by configurationStore.boolean(Key.ENABLE_LOG)
     var logBufSize by configurationStore.int(Key.LOG_BUF_SIZE) { 0 }
@@ -187,6 +188,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var requireTransproxy by configurationStore.boolean(Key.REQUIRE_TRANSPROXY)
     var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
+    var connectionTestConcurrent by configurationStore.int("connectionTestConcurrent") { 5 }
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
     var appTrafficStatistics by configurationStore.boolean(Key.APP_TRAFFIC_STATISTICS)

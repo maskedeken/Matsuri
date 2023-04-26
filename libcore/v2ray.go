@@ -2,8 +2,8 @@ package libcore
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"libcore/device"
 	"log"
 	"strings"
 	"sync"
@@ -40,9 +40,7 @@ func NewV2rayInstance() *V2RayInstance {
 }
 
 func (instance *V2RayInstance) LoadConfig(content string) error {
-	if outdated != "" {
-		return errors.New(outdated)
-	}
+	defer device.DeferPanicToError("LoadConfig", func(err error) { log.Println(err) })
 
 	instance.access.Lock()
 	defer instance.access.Unlock()
@@ -82,6 +80,8 @@ func (instance *V2RayInstance) LoadConfig(content string) error {
 }
 
 func (instance *V2RayInstance) Start() error {
+	defer device.DeferPanicToError("Start", func(err error) { log.Println(err) })
+
 	instance.access.Lock()
 	defer instance.access.Unlock()
 	if instance.started {
@@ -110,6 +110,8 @@ func (instance *V2RayInstance) QueryStats(tag string, direct string) int64 {
 }
 
 func (instance *V2RayInstance) Close() error {
+	defer device.DeferPanicToError("Close", func(err error) { log.Println(err) })
+
 	instance.access.Lock()
 	defer instance.access.Unlock()
 	if instance.started {
