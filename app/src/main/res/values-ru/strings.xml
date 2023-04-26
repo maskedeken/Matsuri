@@ -437,10 +437,4 @@
 \n
 \nЭта опция заменяет первые 6 байт вектора инициализации на буквенные символы, что позволяет кому угодно в сети провайдера идентифицировать протокол когда опция включена.</string>
     <string name="packet_encoding">Кодирование пакетов</string>
-
-    <string name="tuic_disable_sni">Отключить SNI</string>
-    <string name="tuic_reduce_rtt">Уменьшить RTT</string>
-    <string name="tuic_congestion_controller">Контроллер перегрузки</string>
-    <string name="tuic_token">Токен</string>
-    <string name="tuic_udp_relay_mode">Режим UDP-ретранслятора</string>
 </resources>

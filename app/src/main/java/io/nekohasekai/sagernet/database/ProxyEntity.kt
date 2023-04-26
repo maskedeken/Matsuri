@@ -200,7 +200,6 @@ data class ProxyEntity(
             TYPE_NAIVE -> naiveBean = KryoConverters.naiveDeserialize(byteArray)
             TYPE_HYSTERIA -> hysteriaBean = KryoConverters.hysteriaDeserialize(byteArray)
             TYPE_MIERU -> mieruBean = KryoConverters.mieruDeserialize(byteArray)
-            TYPE_TUIC -> tuicBean = KryoConverters.tuicDeserialize(byteArray)
             TYPE_SSH -> sshBean = KryoConverters.sshDeserialize(byteArray)
             TYPE_WG -> wgBean = KryoConverters.wireguardDeserialize(byteArray)
             TYPE_TUIC -> tuicBean = KryoConverters.tuicDeserialize(byteArray)
@@ -244,7 +243,6 @@ data class ProxyEntity(
             TYPE_NAIVE -> naiveBean
             TYPE_HYSTERIA -> hysteriaBean
             TYPE_MIERU -> mieruBean
-            TYPE_TUIC -> tuicBean
             TYPE_SSH -> sshBean
             TYPE_WG -> wgBean
             TYPE_TUIC -> tuicBean
@@ -379,7 +377,6 @@ data class ProxyEntity(
         naiveBean = null
         hysteriaBean = null
         mieruBean = null
-        tuicBean = null
         sshBean = null
         wgBean = null
         tuicBean = null
@@ -478,7 +475,6 @@ data class ProxyEntity(
                 TYPE_NAIVE -> NaiveSettingsActivity::class.java
                 TYPE_HYSTERIA -> HysteriaSettingsActivity::class.java
                 TYPE_MIERU -> MieruSettingsActivity::class.java
-                TYPE_TUIC -> TuicSettingsActivity::class.java
                 TYPE_SSH -> SSHSettingsActivity::class.java
                 TYPE_WG -> WireGuardSettingsActivity::class.java
                 TYPE_TUIC -> TuicSettingsActivity::class.java

@@ -220,7 +220,6 @@
     <string name="action_ping_tunnel" translatable="false">Ping Tunnel</string>
     <string name="action_hysteria" translatable="false">Hysteria</string>
     <string name="action_mieru" translatable="false">Mieru</string>
-    <string name="action_tuic" translatable="false">TUIC</string>
     <string name="action_ssh" translatable="false">SSH</string>
     <string name="action_wireguard" translatable="false">WireGuard</string>
     <string name="proxy_chain">Proxy Chain</string>
@@ -523,7 +522,6 @@ Anyone can write advanced plugins, which can control Matsuri. please download an
     <string name="utls_fingerprint">uTLS fingerprint</string>
     <string name="fingerprint">Fingerprint</string>
     <string name="bypass_lan_in_core">Bypass LAN in Core</string>
-    <string name="ads">Ads</string>
     <string name="share_subscription">Share Subscription</string>
     <string name="show_group_in_notification">Show group name in in notification</string>
     <string name="reset_connections">Reset Connections</string>
