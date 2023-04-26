@@ -313,7 +313,7 @@ fun buildV2RayConfig(
 
             rules.addAll(wsRules.values)
 
-            if (!forTest && DataStore.bypassLan && (requireHttp || DataStore.bypassLanInCoreOnly)) {
+            if (!forTest && (requireHttp || DataStore.bypassLanInCore)) {
                 rules.add(RoutingObject.RuleObject().apply {
                     type = "field"
                     outboundTag = TAG_BYPASS
@@ -712,7 +712,6 @@ fun buildV2RayConfig(
                                         pluginArgs = listOf(
                                             "--obfs=${bean.obfs}",
                                             "--obfs-param=${bean.obfsParam}",
-
                                             "--protocol=${bean.protocol}",
                                             "--protocol-param=${bean.protocolParam}"
                                         )
@@ -787,6 +786,7 @@ fun buildV2RayConfig(
                 }
 
                 pastEntity?.requireBean()?.apply {
+                    // don't loopback
                     if (currentDomainStrategy != "AsIs" && !serverAddress.isIpAddress()) {
                         domainListDNSDirect.add("full:$serverAddress")
                     }

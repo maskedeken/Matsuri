@@ -38,6 +38,8 @@ import io.nekohasekai.sagernet.aidl.AppStatsList
 import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.getColorAttr
 import io.nekohasekai.sagernet.ui.SwitchActivity
@@ -54,12 +56,19 @@ import io.nekohasekai.sagernet.utils.Theme
  * See also: https://github.com/aosp-mirror/platform_frameworks_base/commit/070d142993403cc2c42eca808ff3fafcee220ac4
  */
 class ServiceNotification(
-    private val service: BaseService.Interface, profileName: String,
+    private val service: BaseService.Interface, title: String,
     channel: String, visible: Boolean = false,
 ) : BroadcastReceiver() {
     companion object {
         const val notificationId = 1
-        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+        val flags =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+
+        fun genTitle(ent: ProxyEntity): String {
+            val gn = if (DataStore.showGroupInNotification)
+                SagerDatabase.groupDao.getById(ent.groupId)?.displayName() else null
+            return if (gn == null) ent.displayName() else "[$gn] ${ent.displayName()}"
+        }
     }
 
     val trafficStatistics = DataStore.profileTrafficStatistics
@@ -118,8 +127,9 @@ class ServiceNotification(
             }
 
             override fun updateWakeLockStatus(acquired: Boolean) {
-                updateActions(acquired)
-                builder.priority = if (acquired) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_LOW
+                updateActions()
+                builder.priority =
+                    if (acquired) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_LOW
                 update()
             }
         }
@@ -129,7 +139,7 @@ class ServiceNotification(
     private val builder = NotificationCompat.Builder(service as Context, channel)
         .setWhen(0)
         .setTicker(service.getString(R.string.forward_success))
-        .setContentTitle(profileName)
+        .setContentTitle(title)
         .setOnlyAlertOnce(true)
         .setContentIntent(SagerNet.configureIntent(service))
         .setSmallIcon(R.drawable.ic_service_active)
@@ -138,7 +148,7 @@ class ServiceNotification(
 
     init {
         service as Context
-        updateActions(false)
+        updateActions()
 
         Theme.apply(app)
         Theme.apply(service)
@@ -152,41 +162,43 @@ class ServiceNotification(
         show()
     }
 
-    fun updateActions(wakeLockAcquired: Boolean) {
+    private fun updateActions() {
         service as Context
-
         builder.clearActions()
+
         val closeAction = NotificationCompat.Action.Builder(
             0, service.getText(R.string.stop), PendingIntent.getBroadcast(
                 service, 0, Intent(Action.CLOSE).setPackage(service.packageName), flags
             )
-        ).apply {
-            setShowsUserInterface(false)
-        }.build()
+        ).setShowsUserInterface(false).build()
         builder.addAction(closeAction)
 
         val switchAction = NotificationCompat.Action.Builder(
             0, service.getString(R.string.action_switch), PendingIntent.getActivity(
                 service, 0, Intent(service, SwitchActivity::class.java), flags
             )
-        ).apply {
-            setShowsUserInterface(false)
-        }.build()
+        ).setShowsUserInterface(false).build()
         builder.addAction(switchAction)
 
-        val wakeLockAction = NotificationCompat.Action.Builder(
-            0,
-            service.getText(if (!wakeLockAcquired) R.string.acquire_wake_lock else R.string.release_wake_lock),
+        val resetUpstreamAction = NotificationCompat.Action.Builder(
+            0, service.getString(R.string.reset_connections),
             PendingIntent.getBroadcast(
-                service,
-                0,
-                Intent(Action.SWITCH_WAKE_LOCK).setPackage(service.packageName),
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+                service, 0, Intent(Action.RESET_UPSTREAM_CONNECTIONS), flags
             )
-        ).apply {
-            setShowsUserInterface(false)
-        }.build()
-        builder.addAction(wakeLockAction)
+        ).setShowsUserInterface(false).build()
+        builder.addAction(resetUpstreamAction)
+
+//        val wakeLockAction = NotificationCompat.Action.Builder(
+//            0,
+//            service.getText(if (!wakeLockAcquired) R.string.acquire_wake_lock else R.string.release_wake_lock),
+//            PendingIntent.getBroadcast(
+//                service,
+//                0,
+//                Intent(Action.SWITCH_WAKE_LOCK).setPackage(service.packageName),
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+//            )
+//        ).setShowsUserInterface(false).build()
+//        builder.addAction(wakeLockAction)
     }
 
     override fun onReceive(context: Context, intent: Intent) {

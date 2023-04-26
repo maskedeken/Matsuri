@@ -54,7 +54,7 @@ object Key {
     const val RESOLVE_DESTINATION = "resolveDestination"
 
     const val BYPASS_LAN = "bypassLan"
-    const val BYPASS_LAN_IN_CORE_ONLY = "bypassLanInCoreOnly"
+    const val BYPASS_LAN_IN_CORE = "bypassLanInCore"
 
     const val SOCKS_PORT = "socksPort"
     const val ALLOW_ACCESS = "allowAccess"
@@ -241,5 +241,6 @@ object Action {
     const val SERVICE = "io.nekohasekai.sagernet.SERVICE"
     const val CLOSE = "io.nekohasekai.sagernet.CLOSE"
     const val RELOAD = "io.nekohasekai.sagernet.RELOAD"
-    const val SWITCH_WAKE_LOCK = "io.nekohasekai.sagernet.SWITCH_WAKELOCK"
+    // const val SWITCH_WAKE_LOCK = "io.nekohasekai.sagernet.SWITCH_WAKELOCK"
+    const val RESET_UPSTREAM_CONNECTIONS = "moe.nb4a.RESET_UPSTREAM_CONNECTIONS"
 }
