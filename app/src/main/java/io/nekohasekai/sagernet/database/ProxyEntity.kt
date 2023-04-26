@@ -223,6 +223,7 @@ data class ProxyEntity(
         TYPE_WG -> "WireGuard"
         TYPE_MIERU -> "Mieru"
         TYPE_TUIC -> "TUIC"
+
         TYPE_CHAIN -> chainName
         TYPE_NEKO -> nekoBean!!.displayType()
         else -> "Undefined type $type"
@@ -341,7 +342,6 @@ data class ProxyEntity(
             TYPE_NAIVE -> true
             TYPE_HYSTERIA -> true
             TYPE_MIERU -> true
-            TYPE_TUIC -> true
             TYPE_WG -> true
             TYPE_TUIC -> true
             TYPE_NEKO -> true
