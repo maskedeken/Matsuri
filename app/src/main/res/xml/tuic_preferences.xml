@@ -7,7 +7,6 @@
         app:useSimpleSummaryProvider="true" />
 
     <com.takisoft.preferencex.SimpleMenuPreference
-        app:defaultValue="5"
         app:entries="@array/tuic_version"
         app:entryValues="@array/tuic_version"
         app:icon="@drawable/ic_baseline_update_24"
