@@ -529,4 +529,5 @@ Anyone can write advanced plugins, which can control Matsuri. please download an
     <string name="remove_duplicate">Remove duplicate servers</string>
     <string name="test_concurrency">Test concurrency</string>
 
+    <string name="protocol_version">Protocol Version</string>
 </resources>

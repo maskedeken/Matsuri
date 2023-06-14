@@ -39,8 +39,16 @@ public class TuicBean extends AbstractBean {
     public Boolean reduceRTT;
     public Integer mtu;
     public String sni;
+
+    // TUIC zep
+
     public Boolean fastConnect;
     public Boolean allowInsecure;
+
+    // TUIC v5
+
+    public Integer protocolVersion;
+    public String uuid;
 
     @Override
     public void initializeDefaultValues() {
@@ -56,11 +64,13 @@ public class TuicBean extends AbstractBean {
         if (sni == null) sni = "";
         if (fastConnect == null) fastConnect = false;
         if (allowInsecure == null) allowInsecure = false;
+        if (protocolVersion == null) protocolVersion = 5;
+        if (uuid == null) uuid = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(token);
         output.writeString(caText);
@@ -73,6 +83,8 @@ public class TuicBean extends AbstractBean {
         output.writeString(sni);
         output.writeBoolean(fastConnect);
         output.writeBoolean(allowInsecure);
+        output.writeInt(protocolVersion);
+        output.writeString(uuid);
     }
 
     @Override
@@ -91,6 +103,10 @@ public class TuicBean extends AbstractBean {
         if (version >= 1) {
             fastConnect = input.readBoolean();
             allowInsecure = input.readBoolean();
+        }
+        if (version >= 2) {
+            protocolVersion = input.readInt();
+            uuid = input.readString();
         }
     }
 

@@ -63,8 +63,14 @@ enum class PluginEntry(
     ),
     TUIC(
         "tuic-plugin",
-        SagerNet.application.getString(R.string.action_tuic),
+        "TUIC(v4)",
         "io.nekohasekai.sagernet.plugin.tuic",
+        DownloadSource(fdroid = false)
+    ),
+    TUIC5(
+        "tuic-v5-plugin",
+        "TUIC(v5)",
+        "io.nekohasekai.sagernet.plugin.tuic5",
         DownloadSource(fdroid = false)
     ),
     ;

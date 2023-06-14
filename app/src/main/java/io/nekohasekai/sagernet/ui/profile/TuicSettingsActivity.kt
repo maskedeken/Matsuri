@@ -48,8 +48,12 @@ class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
         DataStore.serverSNI = sni
         DataStore.serverReduceRTT = reduceRTT
         DataStore.serverMTU = mtu
+        //
         DataStore.serverFastConnect = fastConnect
         DataStore.serverAllowInsecure = allowInsecure
+        //
+        DataStore.serverProtocolVersion = protocolVersion
+        DataStore.serverUsername = uuid
     }
 
     override fun TuicBean.serialize() {
@@ -65,8 +69,12 @@ class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
         sni = DataStore.serverSNI
         reduceRTT = DataStore.serverReduceRTT
         mtu = DataStore.serverMTU
+        //
         fastConnect = DataStore.serverFastConnect
         allowInsecure = DataStore.serverAllowInsecure
+        //
+        protocolVersion = DataStore.serverProtocolVersion
+        uuid = DataStore.serverUsername
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -74,6 +82,26 @@ class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
         rootKey: String?,
     ) {
         addPreferencesFromResource(R.xml.tuic_preferences)
+
+        val uuid = findPreference<EditTextPreference>(Key.SERVER_USERNAME)!!
+        val mtu = findPreference<EditTextPreference>(Key.SERVER_MTU)!!
+        val fastConnect = findPreference<SwitchPreference>(Key.SERVER_FAST_CONNECT)!!
+        fun updateVersion(v: Int) {
+            if (v == 5) {
+                uuid.isVisible = true
+                mtu.isVisible = false
+                fastConnect.isVisible = false
+            } else {
+                uuid.isVisible = false
+                mtu.isVisible = true
+                fastConnect.isVisible = true
+            }
+        }
+        findPreference<SimpleMenuPreference>(Key.SERVER_PROTOCOL)!!.setOnPreferenceChangeListener { _, newValue ->
+            updateVersion(newValue.toString().toIntOrNull() ?: 4)
+            true
+        }
+        updateVersion(DataStore.serverProtocolVersion)
 
         val disableSNI = findPreference<SwitchPreference>(Key.SERVER_DISABLE_SNI)!!
         val sni = findPreference<EditTextPreference>(Key.SERVER_SNI)!!

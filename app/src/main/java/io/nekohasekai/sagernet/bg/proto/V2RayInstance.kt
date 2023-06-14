@@ -44,6 +44,7 @@ import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.tuic.buildTuicConfig
+import io.nekohasekai.sagernet.fmt.tuic.pluginId
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.fmt.wireguard.buildWireGuardUapiConf
 import io.nekohasekai.sagernet.ktx.*
@@ -125,7 +126,7 @@ abstract class V2RayInstance(
                         pluginConfigs[port] = profile.type to bean.buildWireGuardUapiConf()
                     }
                     is TuicBean -> {
-                        initPlugin("tuic-plugin")
+                        initPlugin(bean.pluginId())
                         pluginConfigs[port] = profile.type to bean.buildTuicConfig(port) {
                             File(
                                 app.noBackupFilesDir,
@@ -326,7 +327,7 @@ abstract class V2RayInstance(
                         cacheFiles.add(configFile)
 
                         val commands = mutableListOf(
-                            initPlugin("tuic-plugin").path,
+                            initPlugin(bean.pluginId()).path,
                             "-c",
                             configFile.absolutePath,
                         )
