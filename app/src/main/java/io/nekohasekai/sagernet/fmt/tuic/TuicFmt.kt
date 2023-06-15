@@ -23,14 +23,9 @@ import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.toStringPretty
 import io.nekohasekai.sagernet.ktx.wrapIPV6Host
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import moe.matsuri.nya.neko.Plugins
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
-import java.net.InetAddress
 
 fun TuicBean.pluginId(): String {
     return when (protocolVersion) {
@@ -40,16 +35,6 @@ fun TuicBean.pluginId(): String {
 }
 
 fun TuicBean.buildTuicConfig(port: Int, cacheFile: (() -> File)?): String {
-    if (Plugins.isUsingMatsuriExe(pluginId())) {
-        if (!serverAddress.isIpAddress()) {
-            runBlocking {
-                finalAddress = withContext(Dispatchers.IO) {
-                    InetAddress.getAllByName(serverAddress)
-                }?.firstOrNull()?.hostAddress ?: "127.0.0.1"
-                // TODO network on main thread, tuic don't support "sni"
-            }
-        }
-    }
     return when (protocolVersion) {
         5 -> buildTuicConfigV5(port, cacheFile)
         else -> buildTuicConfigV4(port, cacheFile)
@@ -61,10 +46,16 @@ fun TuicBean.buildTuicConfigV5(port: Int, cacheFile: (() -> File)?): JSONObject 
         put("relay", JSONObject().apply {
             if (sni.isNotBlank() && !disableSNI) {
                 put("server", "$sni:$finalPort")
-                put("ip", finalAddress)
+                if (finalAddress.isIpAddress()) {
+                    put("ip", finalAddress)
+                } else {
+                    throw Exception("TUIC must use IP address when you need spoof SNI.")
+                }
             } else if (!serverAddress.isIpAddress()) {
                 put("server", "$serverAddress:$finalPort")
-                put("ip", finalAddress)
+                if (finalAddress.isIpAddress()) {
+                    put("ip", finalAddress)
+                }
             } else {
                 put("server", finalAddress.wrapIPV6Host() + ":" + finalPort)
             }
@@ -99,13 +90,20 @@ fun TuicBean.buildTuicConfigV4(port: Int, cacheFile: (() -> File)?): JSONObject 
         put("relay", JSONObject().apply {
             if (sni.isNotBlank() && !disableSNI) {
                 put("server", sni)
-                put("ip", finalAddress)
+                if (finalAddress.isIpAddress()) {
+                    put("ip", finalAddress)
+                } else {
+                    throw Exception("TUIC must use IP address when you need spoof SNI.")
+                }
             } else if (!serverAddress.isIpAddress()) {
                 put("server", serverAddress)
-                put("ip", finalAddress)
+                if (finalAddress.isIpAddress()) {
+                    put("ip", finalAddress)
+                }
             } else {
                 put("server", finalAddress)
             }
+
             put("port", finalPort)
             put("token", token)
 
