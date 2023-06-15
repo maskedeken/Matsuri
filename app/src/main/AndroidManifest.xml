@@ -179,9 +179,6 @@
             android:name="io.nekohasekai.sagernet.ui.profile.SSHSettingsActivity"
             android:configChanges="uiMode" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.WireGuardSettingsActivity"
-            android:configChanges="uiMode" />
-        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.TuicSettingsActivity"
             android:configChanges="uiMode" />
         <activity

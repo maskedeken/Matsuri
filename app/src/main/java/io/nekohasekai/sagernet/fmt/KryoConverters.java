@@ -42,7 +42,6 @@ import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean;
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean;
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean;
-import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean;
 import io.nekohasekai.sagernet.ktx.KryosKt;
 import io.nekohasekai.sagernet.ktx.Logs;
 import moe.matsuri.nya.neko.NekoBean;
@@ -140,12 +139,6 @@ public class KryoConverters {
     public static SSHBean sshDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new SSHBean(), bytes);
-    }
-
-    @TypeConverter
-    public static WireGuardBean wireguardDeserialize(byte[] bytes) {
-        if (JavaUtil.isEmpty(bytes)) return null;
-        return deserialize(new WireGuardBean(), bytes);
     }
 
     @TypeConverter

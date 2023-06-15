@@ -402,17 +402,11 @@
     <string name="menu_log">日志</string>
     <string name="menu_tools">工具</string>
     <string name="translate_platform">翻译平台</string>
-    <string name="wireguard_local_address">本地地址</string>
-    <string name="wireguard_public_key">节点公钥</string>
-    <string name="wireguard_psk">节点预共享密钥</string>
     <string name="resolve_destination_summary">如果目标地址是一个域, 则根据 IPv6 策略传出（与 FakeDNS 冲突）</string>
     <string name="resolve_destination">解析目标地址</string>
     <string name="destination_override_summary">使用探测的域来覆盖目标地址, 而不是仅用于路由</string>
     <string name="destination_override">覆盖目标地址</string>
     <string name="tun_implementation">TUN 实现</string>
-    <string name="generating">正在生成…</string>
-    <string name="warp_generate">生成配置</string>
-    <string name="warp_license">CloudFlare Warp 是一个免费的 WireGuard VPN 提供源. 使用它, 代表您同意其服务条款。</string>
     <string name="profile_traffic_statistics_summary">禁用后将不统计使用的流量</string>
     <string name="app_statistics_disabled">应用流量统计已禁用</string>
     <string name="enable_pcap">启用 Pcap</string>

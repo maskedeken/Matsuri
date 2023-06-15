@@ -412,12 +412,6 @@
     <string name="menu_tools">ابزار</string>
     <string name="menu_log">لاگ ها</string>
     <string name="clear_logcat">Logcat را پاک کنید</string>
-    <string name="wireguard_local_address">آدرس محلی</string>
-    <string name="wireguard_public_key">کلید عمومی همتا</string>
-    <string name="wireguard_psk">کلید از پیش مشترک همتا</string>
-    <string name="warp_license">CloudFlare Warp یک ارائه دهنده رایگان WireGuard VPN است. با استفاده از آن، با TOS موافقت می کنید.</string>
-    <string name="warp_generate">ایجاد پیکربندی</string>
-    <string name="generating">در حال تولید…</string>
     <string name="tun_implementation">پیاده سازی TUN</string>
     <string name="destination_override">لغو مقصد</string>
     <string name="destination_override_summary">از دامنه sniffed برای بازنویسی آدرس مقصد استفاده کنید، نه فقط برای مسیریابی</string>

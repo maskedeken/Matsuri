@@ -218,8 +218,7 @@
     <string name="action_ping_tunnel" translatable="false">Ping Tunnel</string> 
     <string name="action_hysteria" translatable="false">Hysteria</string> 
     <string name="action_ssh" translatable="false">SSH</string> 
-    <string name="action_wireguard" translatable="false">WireGuard</string> 
-    <string name="proxy_chain">Cadena del proxy</string> 
+    <string name="proxy_chain">Cadena del proxy</string>
     <string name="custom_config">Configuración personalizada</string> 
     <string name="balancer">Equilibrador</string> 
     <string name="balancer_settings">Ajustes del equilibrador</string> 
@@ -444,15 +443,8 @@
     <string name="menu_tools">Herramientas</string> 
     <string name="menu_log">Registros</string> 
     <string name="clear_logcat">Borrar Logcat</string> 
-    <string name="wireguard_local_address">Dirección local</string> 
-    <string name="wireguard_public_key">Clave pública de pares</string> 
-    <string name="wireguard_psk">Clave precompartida de pares</string> 
- 
-    <string name="cloudflare_wrap" translatable="false">Cloudflare Warp</string> 
-    <string name="warp_license">CloudFlare Warp es un proveedor gratuito de la VPN WireGuard. Al usarlo, usted acepta los TOS.</string> 
-    <string name="warp_generate">Generar configuración</string> 
-    <string name="generating">Generando…</string> 
-    <string name="tun_implementation">Implementación TUN</string> 
+
+    <string name="tun_implementation">Implementación TUN</string>
     <string name="destination_override">Anular destino</string> 
     <string name="destination_override_summary">Usa el dominio rastreado para sobrescribir la dirección de destino, no solo para el enrutamiento</string> 
     <string name="resolve_destination">Resolver destino</string> 

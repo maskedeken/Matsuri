@@ -398,10 +398,7 @@
     <string name="app_traffic_statistics">Статистика трафика приложений</string>
     <string name="profile_traffic_statistics_summary">Когда отключено, использованный трафик не будет отображаться</string>
     <string name="app_statistics_disabled">Статистика трафика приложений отключена в настройках</string>
-    <string name="warp_generate">Создать конфигурацию</string>
-    <string name="generating">Создание…</string>
     <string name="tun_implementation">Реализация TUN</string>
-    <string name="wireguard_local_address">Частный адрес</string>
     <string name="enable_pcap">Включить Pcap</string>
     <string name="pcap_summary">Сохранять трафик в файл .pcap</string>
     <string name="destination_override">Переопределять адрес назначения</string>
@@ -410,8 +407,6 @@
     <string name="pcap_notice">Pcap файлы будут сохранены в %s</string>
     <string name="route_play_store">Правило Play Store для %s</string>
     <string name="route_opt_block_analysis">Блокировать аналитику</string>
-    <string name="wireguard_public_key">Открытый ключ сервера</string>
-    <string name="wireguard_psk">Пароль сервера</string>
     <string name="naive_insecure_concurrency">Небезопасный параллелизм</string>
     <string name="naive_insecure_concurrency_summary">Использовать N параллельных соединений для повышения отказоустойчивости в условиях ненадёжной сети. Большее число соединений увеличивает риск обнаружения туннелей и снижает безопасность. Этот проект стремится к максимальной защите от анализа трафика, следовательно, использование его небезопасным образом противоречит данной цели.
 \n
@@ -421,7 +416,6 @@
     <string name="stun_attest_loading">Пожалуйста, подождите…</string>
     <string name="stun_test">Обнаружение поведения NAT</string>
     <string name="stun_test_summary">Определить поведение сопоставления адресов NAT и поведение фильтрации NAT в соответствии с RFC 5780 при помощи STUN.</string>
-    <string name="warp_license">[CloudFlare Warp](https://blog.cloudflare.com/1111-warp-better-vpn/) - это бесплатный провайдер WireGuard VPN. Используя его, вы соглашаетесь с [условиями использования](https://www.cloudflare.com/application/terms/).</string>
     <string name="tools_network">Сеть</string>
     <string name="backup">Бэкап</string>
     <string name="backup_rules">Правила маршрутизации</string>

@@ -44,7 +44,6 @@ import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
-import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
@@ -807,7 +806,6 @@ fun buildV2RayConfig(
                     if (index == profileList.lastIndex) {
                         val pluginId = when (bean) {
                             is HysteriaBean -> "hysteria-plugin"
-                            is WireGuardBean -> "wireguard-plugin"
                             is TuicBean -> bean.pluginId()
                             else -> ""
                         }

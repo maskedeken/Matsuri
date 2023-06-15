@@ -360,8 +360,6 @@
     <string name="hysteria_disable_mtu_discovery">Skru av oppdagelse av maksimal overførelsesenhet i sti</string>
     <string name="traffic_active">Aktiv</string>
     <string name="ssh_private_key_passphrase">Passord for privat nøkkel</string>
-    <string name="wireguard_psk">Forhåndsdelt nøkkel for likemann</string>
-    <string name="wireguard_public_key">Offentlig nøkkel for likemann</string>
     <string name="translate_platform">Oversettelsesplattform</string>
     <string name="route_need_vpn">Rutingsregelen %s avhenger av at VPN er operativ, så den ignoreres.</string>
     <string name="traffic_statistics_summary">Kan øke strømforbruket</string>
@@ -372,7 +370,6 @@
     <string name="traffic_stats">Statistikk</string>
     <string name="group_order_by_delay">Etter forsinkelse</string>
     <string name="group_order_by_name">Etter navn</string>
-    <string name="wireguard_local_address">Lokal adresse</string>
     <string name="clear_logcat">Tøm Logcat</string>
     <string name="menu_log">Logger</string>
     <string name="menu_tools">Verktøy</string>

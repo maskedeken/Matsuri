@@ -55,13 +55,15 @@ import io.nekohasekai.sagernet.fmt.tuic.buildTuicConfig
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
-import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.isTLS
 import io.nekohasekai.sagernet.ui.profile.*
 import moe.matsuri.nya.Protocols
-import moe.matsuri.nya.neko.*
+import moe.matsuri.nya.neko.NekoBean
+import moe.matsuri.nya.neko.NekoSettingActivity
+import moe.matsuri.nya.neko.haveStandardLink
+import moe.matsuri.nya.neko.shareLink
 
 @Entity(
     tableName = "proxy_entities", indices = [Index("groupId", name = "groupId")]
@@ -89,7 +91,6 @@ data class ProxyEntity(
     var mieruBean: MieruBean? = null,
     var tuicBean: TuicBean? = null,
     var sshBean: SSHBean? = null,
-    var wgBean: WireGuardBean? = null,
     var chainBean: ChainBean? = null,
     var nekoBean: NekoBean? = null,
 ) : Serializable() {
@@ -107,7 +108,6 @@ data class ProxyEntity(
         const val TYPE_HYSTERIA = 15
 
         const val TYPE_SSH = 17
-        const val TYPE_WG = 18
 
         const val TYPE_MIERU = 19
         const val TYPE_TUIC = 20
@@ -201,7 +201,6 @@ data class ProxyEntity(
             TYPE_HYSTERIA -> hysteriaBean = KryoConverters.hysteriaDeserialize(byteArray)
             TYPE_MIERU -> mieruBean = KryoConverters.mieruDeserialize(byteArray)
             TYPE_SSH -> sshBean = KryoConverters.sshDeserialize(byteArray)
-            TYPE_WG -> wgBean = KryoConverters.wireguardDeserialize(byteArray)
             TYPE_TUIC -> tuicBean = KryoConverters.tuicDeserialize(byteArray)
 
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
@@ -220,7 +219,6 @@ data class ProxyEntity(
         TYPE_NAIVE -> "Naïve"
         TYPE_HYSTERIA -> "Hysteria"
         TYPE_SSH -> "SSH"
-        TYPE_WG -> "WireGuard"
         TYPE_MIERU -> "Mieru"
         TYPE_TUIC -> "TUIC"
 
@@ -245,7 +243,6 @@ data class ProxyEntity(
             TYPE_HYSTERIA -> hysteriaBean
             TYPE_MIERU -> mieruBean
             TYPE_SSH -> sshBean
-            TYPE_WG -> wgBean
             TYPE_TUIC -> tuicBean
 
             TYPE_CHAIN -> chainBean
@@ -266,7 +263,6 @@ data class ProxyEntity(
             is MieruBean -> false
             is TuicBean -> false
             is SSHBean -> false
-            is WireGuardBean -> false
             is NekoBean -> nekoBean!!.haveStandardLink()
             else -> true
         }
@@ -285,7 +281,6 @@ data class ProxyEntity(
             is HysteriaBean -> toUri()
             is MieruBean -> toUniversalLink()
             is SSHBean -> toUniversalLink()
-            is WireGuardBean -> toUniversalLink()
             is TuicBean -> toUniversalLink()
             is NekoBean -> shareLink()
             else -> null
@@ -342,7 +337,6 @@ data class ProxyEntity(
             TYPE_NAIVE -> true
             TYPE_HYSTERIA -> true
             TYPE_MIERU -> true
-            TYPE_WG -> true
             TYPE_TUIC -> true
             TYPE_NEKO -> true
             else -> false
@@ -378,7 +372,6 @@ data class ProxyEntity(
         hysteriaBean = null
         mieruBean = null
         sshBean = null
-        wgBean = null
         tuicBean = null
 
         chainBean = null
@@ -437,11 +430,6 @@ data class ProxyEntity(
                 sshBean = bean
             }
 
-            is WireGuardBean -> {
-                type = TYPE_WG
-                wgBean = bean
-            }
-
             is TuicBean -> {
                 type = TYPE_TUIC
                 tuicBean = bean
@@ -476,7 +464,6 @@ data class ProxyEntity(
                 TYPE_HYSTERIA -> HysteriaSettingsActivity::class.java
                 TYPE_MIERU -> MieruSettingsActivity::class.java
                 TYPE_SSH -> SSHSettingsActivity::class.java
-                TYPE_WG -> WireGuardSettingsActivity::class.java
                 TYPE_TUIC -> TuicSettingsActivity::class.java
 
                 TYPE_CHAIN -> ChainSettingsActivity::class.java

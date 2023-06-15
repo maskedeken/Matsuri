@@ -347,8 +347,6 @@ public class V2RayConfig {
                     return TrojanOutboundConfigurationObject.class;
                 case "loopback":
                     return LoopbackOutboundConfigurationObject.class;
-                case "wireguard":
-                    return WireGuardOutbounzConfigurationObject.class;
                 case "ssh":
                     return SSHOutbountConfigurationObject.class;
             }
@@ -517,20 +515,6 @@ public class V2RayConfig {
     public static class LoopbackOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public String inboundTag;
-
-    }
-
-    public static class WireGuardOutbounzConfigurationObject implements OutboundConfigurationObject {
-
-        public String address;
-        public Integer port;
-        public String network;
-        public List<String> localAddresses;
-        public String privateKey;
-        public String peerPublicKey;
-        public String preSharedKey;
-        public Integer mtu;
-        public Integer userLevel;
 
     }
 

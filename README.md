@@ -50,7 +50,6 @@ https://matsuridayo.github.io
 * Mieru ( mieru-plugin )
 * TUIC ( tuic-plugin )
 * TUIC5 ( tuic-v5-plugin )
-* WireGuard ( wireguard-plugin )
 
 请到项目主页下载插件。
 

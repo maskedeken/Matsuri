@@ -61,9 +61,6 @@
                         android:id="@+id/action_new_ssh"
                         android:title="@string/action_ssh" />
                     <item
-                        android:id="@+id/action_new_wg"
-                        android:title="@string/action_wireguard" />
-                    <item
                         android:id="@+id/action_new_chain"
                         android:title="@string/proxy_chain" />
                 </menu>

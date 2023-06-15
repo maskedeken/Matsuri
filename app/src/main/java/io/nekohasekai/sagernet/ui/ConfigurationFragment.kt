@@ -90,9 +90,6 @@ import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.zip.ZipInputStream
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 import kotlin.collections.set
 
 class ConfigurationFragment @JvmOverloads constructor(
@@ -267,8 +264,6 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 val proxies = mutableListOf<AbstractBean>()
                 if (fileName != null && fileName.endsWith(".zip")) {
-                    // try parse wireguard zip
-
                     val zip =
                         ZipInputStream(requireContext().contentResolver.openInputStream(file)!!)
                     while (true) {
@@ -393,10 +388,6 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             R.id.action_new_ssh -> {
                 startActivity(Intent(requireActivity(), SSHSettingsActivity::class.java))
-            }
-
-            R.id.action_new_wg -> {
-                startActivity(Intent(requireActivity(), WireGuardSettingsActivity::class.java))
             }
 
             R.id.action_new_chain -> {
