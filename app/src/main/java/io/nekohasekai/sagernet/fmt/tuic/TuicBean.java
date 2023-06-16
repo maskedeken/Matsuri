@@ -64,7 +64,7 @@ public class TuicBean extends AbstractBean {
         if (sni == null) sni = "";
         if (fastConnect == null) fastConnect = false;
         if (allowInsecure == null) allowInsecure = false;
-        if (protocolVersion == null) protocolVersion = 4;
+        if (protocolVersion == null) protocolVersion = 5;
         if (uuid == null) uuid = "";
     }
 
@@ -107,6 +107,8 @@ public class TuicBean extends AbstractBean {
         if (version >= 2) {
             protocolVersion = input.readInt();
             uuid = input.readString();
+        } else {
+            protocolVersion = 4;
         }
     }
 
