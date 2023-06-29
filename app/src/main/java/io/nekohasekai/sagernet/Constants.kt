@@ -84,6 +84,7 @@ object Key {
     // Protocol Settings
     const val MUX_PROTOCOLS = "mux"
     const val MUX_CONCURRENCY = "muxConcurrency"
+    const val ENABLE_TLS_FRAGMENT = "enableTLSFragment"
 
     const val ACQUIRE_WAKE_LOCK = "acquireWakeLock"
     const val SHOW_BOTTOM_BAR = "showBottomBar"

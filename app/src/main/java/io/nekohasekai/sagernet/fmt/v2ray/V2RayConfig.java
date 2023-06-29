@@ -385,7 +385,12 @@ public class V2RayConfig {
         public String domainStrategy;
         public String redirect;
         public Integer userLevel;
+        public FragmentObject fragment;
 
+        public static class FragmentObject {
+            public String length;
+            public String interval;
+        }
 
     }
 
@@ -570,6 +575,7 @@ public class V2RayConfig {
             @SerializedName("tcpKeepAliveIdle")
             public Integer tcpKeepAliveInterval;
 
+            public Boolean tcpNoDelay;
         }
 
     }
@@ -581,6 +587,7 @@ public class V2RayConfig {
         public List<String> alpn;
         public List<String> nextProtocol; // v5 alpn
         public List<CertificateObject> certificates;
+        public List<CertificateObject> certificate; // v5cfg
         public Boolean disableSystemRoot;
         public List<String> pinnedPeerCertificateChainSha256;
 
@@ -589,7 +596,9 @@ public class V2RayConfig {
             public String usage;
             public List<String> certificate;
             public List<String> key;
-
+            // v5cfg
+            public String Certificate;
+            public String Key;
         }
 
     }

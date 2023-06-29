@@ -199,6 +199,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var muxProtocols by configurationStore.stringSet(Key.MUX_PROTOCOLS)
     var muxConcurrency by configurationStore.stringToInt(Key.MUX_CONCURRENCY) { 8 }
+    var enableTLSFragment by configurationStore.boolean(Key.ENABLE_TLS_FRAGMENT)
 
     // cache
 

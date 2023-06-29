@@ -143,6 +143,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val enableDnsRouting = findPreference<SwitchPreference>(Key.ENABLE_DNS_ROUTING)!!
         val enableFakeDns = findPreference<SwitchPreference>(Key.ENABLE_FAKEDNS)!!
 
+        val enableTLSFragment = findPreference<SwitchPreference>(Key.ENABLE_TLS_FRAGMENT)!!
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             DataStore.directDnsUseSystem = false
             directDnsUseSystem.remove()
@@ -282,6 +284,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         resolveDestination.onPreferenceChangeListener = reloadListener
         acquireWakeLock.onPreferenceChangeListener = reloadListener
 
+        enableTLSFragment.onPreferenceChangeListener = reloadListener
     }
 
     override fun onResume() {

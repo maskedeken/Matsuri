@@ -148,6 +148,9 @@
             app:key="muxConcurrency"
             app:title="@string/mux_concurrency"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:key="enableTLSFragment"
+            app:title="@string/enable_tls_fragment" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">

@@ -485,4 +485,5 @@
     <string name="test_concurrency">测试并发</string>
 
     <string name="protocol_version">协议版本</string>
+    <string name="enable_tls_fragment">启用TLS Client Hello分片</string>
 </resources>

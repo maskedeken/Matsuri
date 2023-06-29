@@ -51,6 +51,8 @@ import moe.matsuri.nya.DNS.applyDNSNetworkSettings
 import moe.matsuri.nya.neko.Plugins
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
+import moe.matsuri.nya.utils.Util
+
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
 const val TAG_TRANS = "trans"
@@ -58,6 +60,7 @@ const val TAG_TRANS = "trans"
 const val TAG_DIRECT = "direct"
 const val TAG_BYPASS = "bypass"
 const val TAG_BLOCK = "block"
+const val TAG_FRAGMENT = "fragment"
 
 const val TAG_DNS_IN = "dns-in"
 const val TAG_DNS_OUT = "dns-out"
@@ -544,13 +547,20 @@ fun buildV2RayConfig(
 
                                         if (bean.certificates.isNotBlank()) {
                                             disableSystemRoot = true
-                                            certificates = listOf(TLSObject.CertificateObject()
-                                                .apply {
-                                                    usage =
-                                                        if (v5_utls) "ENCIPHERMENT" else "verify"
-                                                    certificate = bean.certificates.split("\n")
-                                                        .filter { it.isNotBlank() }
-                                                })
+                                            if (v5_utls) {
+                                                certificate = listOf(TLSObject.CertificateObject()
+                                                    .apply {
+                                                        usage = "AUTHORITY_VERIFY"
+                                                        Certificate = Util.b64EncodeOneLine(bean.certificates.toByteArray())
+                                                    })
+                                            } else {
+                                                certificates = listOf(TLSObject.CertificateObject()
+                                                    .apply {
+                                                        usage = "verify"
+                                                        certificate = bean.certificates.split("\n")
+                                                            .filter { it.isNotBlank() }
+                                                    })
+                                            }
                                         }
 
                                         if (bean.pinnedPeerCertificateChainSha256.isNotBlank()) {
@@ -783,6 +793,14 @@ fun buildV2RayConfig(
                             }
                         }
                     }
+
+                    if (DataStore.enableTLSFragment && (currentOutbound.streamSettings.security == "tls" ||
+                                currentOutbound.streamSettings.security == "utls")) {
+                        currentOutbound.proxySettings = OutboundObject.ProxySettingsObject().apply {
+                            tag = TAG_FRAGMENT
+                            transportLayer = true
+                        }
+                    }
                 }
 
                 pastEntity?.requireBean()?.apply {
@@ -834,6 +852,15 @@ fun buildV2RayConfig(
 
                             // no chain rule and not outbound, so need to set to direct
                             if (index == profileList.lastIndex) {
+                                if (DataStore.enableTLSFragment) {
+                                    routing.rules.add(RoutingObject.RuleObject().apply {
+                                        type = "field"
+                                        network = "tcp"
+                                        inboundTag = listOf(tag)
+                                        outboundTag = TAG_FRAGMENT
+                                    })
+                                }
+
                                 routing.rules.add(RoutingObject.RuleObject().apply {
                                     type = "field"
                                     inboundTag = listOf(tag)
@@ -960,6 +987,24 @@ fun buildV2RayConfig(
             tag = freedom
             protocol = "freedom"
         })
+
+        if (DataStore.enableTLSFragment) {
+            outbounds.add(OutboundObject().apply {
+                tag = TAG_FRAGMENT
+                protocol = "freedom"
+                settings = LazyOutboundConfigurationObject(this, FreedomOutboundConfigurationObject().apply {
+                    fragment = FreedomOutboundConfigurationObject.FragmentObject().apply {
+                        length = "500"
+                        interval = "0-1"
+                    }
+                })
+                streamSettings = StreamSettingsObject().apply {
+                    sockopt = StreamSettingsObject.SockoptObject().apply {
+                        tcpNoDelay = true
+                    }
+                }
+            })
+        }
 
         outbounds.add(OutboundObject().apply {
             tag = TAG_BLOCK
