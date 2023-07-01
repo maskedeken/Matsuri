@@ -41,6 +41,7 @@ public class NaiveBean extends AbstractBean {
     public String sni;
     public String certificates;
     public Integer insecureConcurrency;
+    public Boolean sUoT;
 
     @Override
     public void initializeDefaultValues() {
@@ -53,11 +54,12 @@ public class NaiveBean extends AbstractBean {
         if (certificates == null) certificates = "";
         if (sni == null) sni = "";
         if (insecureConcurrency == null) insecureConcurrency = 0;
+        if (sUoT == null) sUoT = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         super.serialize(output);
         output.writeString(proto);
         output.writeString(username);
@@ -67,6 +69,7 @@ public class NaiveBean extends AbstractBean {
         output.writeString(certificates);
         output.writeString(sni);
         output.writeInt(insecureConcurrency);
+        output.writeBoolean(sUoT);
     }
 
     @Override
@@ -83,6 +86,9 @@ public class NaiveBean extends AbstractBean {
         }
         if (version >= 1) {
             insecureConcurrency = input.readInt();
+        }
+        if (version >= 3) {
+            sUoT = input.readBoolean();
         }
     }
 

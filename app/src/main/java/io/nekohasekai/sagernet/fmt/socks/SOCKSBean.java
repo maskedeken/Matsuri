@@ -33,6 +33,8 @@ public class SOCKSBean extends StandardV2RayBean {
 
     public Integer protocol;
 
+    public Boolean sUoT;
+
     public int protocolVersion() {
         switch (protocol) {
             case 0:
@@ -85,15 +87,17 @@ public class SOCKSBean extends StandardV2RayBean {
         if (protocol == null) protocol = PROTOCOL_SOCKS5;
         if (username == null) username = "";
         if (password == null) password = "";
+        if (sUoT == null) sUoT = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeInt(protocol);
         output.writeString(username);
         output.writeString(password);
+        output.writeBoolean(sUoT);
     }
 
     @Override
@@ -105,6 +109,9 @@ public class SOCKSBean extends StandardV2RayBean {
         }
         username = input.readString();
         password = input.readString();
+        if (version >= 2) {
+            sUoT = input.readBoolean();
+        }
     }
 
     @NotNull

@@ -423,6 +423,14 @@ fun buildV2RayConfig(
                                     .apply {
                                         address = LOCALHOST
                                         port = localPort
+
+                                        // udp over tcp
+                                        try {
+                                            val sUoT = bean.javaClass.getField("sUoT").get(bean)
+                                            if (sUoT is Boolean && sUoT == true) {
+                                                uot = true
+                                            }
+                                        } catch (_: Exception) {}
                                     })
                             })
                     }
@@ -448,6 +456,9 @@ fun buildV2RayConfig(
                                                                     user = bean.username
                                                                     pass = bean.password
                                                                 })
+                                                    }
+                                                    if (bean.sUoT) {
+                                                        uot = true
                                                     }
                                                 })
                                             version = bean.protocolVersionName()

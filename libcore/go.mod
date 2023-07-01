@@ -11,7 +11,7 @@ require (
 	github.com/v2fly/v2ray-core/v5 v5.0.0
 	go.uber.org/automaxprocs v1.4.0
 	golang.org/x/mobile v0.0.0-20220722155234-aaac322e2105
-	golang.org/x/sys v0.5.0
+	golang.org/x/sys v0.7.0
 )
 
 replace github.com/v2fly/v2ray-core/v5 v5.0.0 => ../../v2ray-core
@@ -41,6 +41,7 @@ require (
 	github.com/quic-go/quic-go v0.33.0 // indirect
 	github.com/refraction-networking/utls v1.3.2 // indirect
 	github.com/riobard/go-bloom v0.0.0-20200614022211-cdc8013cb5b3 // indirect
+	github.com/sagernet/sing v0.2.5 // indirect
 	github.com/seiflotfy/cuckoofilter v0.0.0-20220411075957-e3b120b3f5fb // indirect
 	github.com/v2fly/BrowserBridge v0.0.0-20210430233438-0570fc1d7d08 // indirect
 	github.com/v2fly/ss-bloomring v0.0.0-20210312155135-28617310f63e // indirect

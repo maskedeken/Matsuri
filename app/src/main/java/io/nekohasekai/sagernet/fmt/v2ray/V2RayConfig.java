@@ -412,6 +412,7 @@ public class V2RayConfig {
 
         public List<ServerObject> servers;
         public String version;
+        public Boolean uot; // UDP over TCP
 
         public static class ServerObject {
 

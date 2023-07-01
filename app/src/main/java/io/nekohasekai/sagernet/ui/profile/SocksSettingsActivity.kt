@@ -51,6 +51,8 @@ class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
         DataStore.serverCertificates = certificates
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
         DataStore.serverAllowInsecure = allowInsecure
+
+        DataStore.profileCacheStore.putBoolean("sUoT", sUoT)
     }
 
     override fun SOCKSBean.serialize() {
@@ -68,6 +70,8 @@ class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
         certificates = DataStore.serverCertificates
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
         allowInsecure = DataStore.serverAllowInsecure
+
+        sUoT = DataStore.profileCacheStore.getBoolean("sUoT")
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
