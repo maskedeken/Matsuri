@@ -64,6 +64,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Start">
+
         <meta-data
             android:name="android.app.shortcuts"
             android:resource="@xml/shortcuts" />
