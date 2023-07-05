@@ -43,6 +43,15 @@ fun parseTrojanGo(server: String): TrojanGoBean {
         link.queryParameter("sni")?.let {
             sni = it
         }
+        link.queryParameter("fp")?.let {
+            fingerprint = it
+        }
+        link.queryParameter("pbk")?.let {
+            realityPubKey = it
+        }
+        link.queryParameter("sid")?.let {
+            realityShortId = it
+        }
         link.queryParameter("type")?.let { lType ->
             type = lType
 
@@ -75,6 +84,15 @@ fun TrojanGoBean.toUri(): String {
     val builder = linkBuilder().username(password).host(serverAddress).port(serverPort)
     if (sni.isNotBlank()) {
         builder.addQueryParameter("sni", sni)
+    }
+    if (fingerprint.isNotBlank()) {
+        builder.addQueryParameter("fp", fingerprint)
+    }
+    if (realityPubKey.isNotBlank()) {
+        builder.addQueryParameter("pbk", realityPubKey)
+    }
+    if (realityShortId.isNotBlank()) {
+        builder.addQueryParameter("sid", realityShortId)
     }
     if (type.isNotBlank() && type != "original") {
         builder.addQueryParameter("type", type)
