@@ -80,6 +80,8 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         }
         DataStore.serverPlugin = plugin
         DataStore.fingerprint = fingerprint
+        DataStore.profileCacheStore.putString("realityPubKey", realityPubKey)
+        DataStore.profileCacheStore.putString("realityShortId", realityShortId)
     }
 
     override fun TrojanGoBean.serialize() {
@@ -102,6 +104,8 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         }
         plugin = DataStore.serverPlugin
         fingerprint = DataStore.fingerprint
+        realityPubKey = DataStore.profileCacheStore.getString("realityPubKey")
+        realityShortId = DataStore.profileCacheStore.getString("realityShortId")
     }
 
     override fun onAttachedToWindow() {
@@ -119,7 +123,6 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
     lateinit var wsCategory: PreferenceCategory
     lateinit var ssCategory: PreferenceCategory
     lateinit var method: SimpleMenuPreference
-    lateinit var fingerprint: SimpleMenuPreference
 
     val trojanGoMethods = app.resources.getStringArray(R.array.trojan_go_methods)
     val trojanGoNetworks = app.resources.getStringArray(R.array.trojan_go_networks_value)
@@ -160,7 +163,6 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
             true
         }
 
-        fingerprint = findPreference(Key.FINGERPRINT)!!
         plugin = findPreference(Key.SERVER_PLUGIN)!!
         pluginConfigure = findPreference(Key.SERVER_PLUGIN_CONFIGURE)!!
         pluginConfigure.setOnBindEditTextListener(EditTextPreferenceModifiers.Monospace)

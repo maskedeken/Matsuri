@@ -111,6 +111,16 @@ public class TrojanGoBean extends AbstractBean {
      */
     public String fingerprint;
 
+    // --------------------------------------- reality
+
+
+    public String realityPubKey;
+
+    public String realityShortId;
+
+
+    // --------------------------------------- //
+
     @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
@@ -124,11 +134,13 @@ public class TrojanGoBean extends AbstractBean {
         if (plugin == null) plugin = "";
         if (allowInsecure == null) allowInsecure = false;
         if (fingerprint == null) fingerprint = "chrome";
+        if (realityPubKey == null) realityPubKey = "";
+        if (realityShortId == null) realityShortId = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         super.serialize(output);
         output.writeString(password);
         output.writeString(sni);
@@ -145,6 +157,8 @@ public class TrojanGoBean extends AbstractBean {
         output.writeString(plugin);
         output.writeBoolean(allowInsecure);
         output.writeString(fingerprint);
+        output.writeString(realityPubKey);
+        output.writeString(realityShortId);
     }
 
     @Override
@@ -168,9 +182,12 @@ public class TrojanGoBean extends AbstractBean {
         if (version >= 1) {
             allowInsecure = input.readBoolean();
         }
-
         if (version >= 2) {
             fingerprint = input.readString();
+        }
+        if (version >= 3) {
+            realityPubKey = input.readString();
+            realityShortId = input.readString();
         }
     }
 

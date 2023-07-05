@@ -141,6 +141,11 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
             if (sni.isNotBlank()) put("sni", sni)
             if (fingerprint.isNotBlank()) put("fingerprint", fingerprint)
             if (allowInsecure) put("verify", false)
+            if (realityPubKey.isNotBlank()) put("reality", JSONObject().apply {
+                put("enabled", true)
+                put("public_key", realityPubKey)
+                put("short_id", realityShortId)
+            })
         })
 
         when {
@@ -182,6 +187,12 @@ fun JSONObject.parseTrojanGo(): TrojanGoBean {
         optJSONArray("ssl")?.apply {
             sni = optString("sni", sni)
             fingerprint = optString("fingerprint", fingerprint)
+            optJSONArray("reality")?.apply {
+                if (optBoolean("enabled", false)) {
+                    realityPubKey = optString("public_key", realityPubKey)
+                    realityShortId = optString("short_id", realityShortId)
+                }
+            }
         }
         optJSONArray("websocket")?.apply {
             if (optBoolean("enabled", false)) {
