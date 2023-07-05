@@ -178,7 +178,7 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
 
         if (plugin.isNotBlank()) {
             val pluginConfiguration = PluginConfiguration(plugin ?: "")
-            PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+            PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
                 put("transport_plugin", JSONObject().apply {
                     put("enabled", true)
                     put("type", "shadowsocks")
