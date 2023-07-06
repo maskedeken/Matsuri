@@ -835,7 +835,8 @@ fun buildV2RayConfig(
                         }
                     }
 
-                    if (DataStore.enableTLSFragment && (currentOutbound.streamSettings.security == "tls" ||
+                    if (needGlobal && DataStore.enableTLSFragment &&
+                        (currentOutbound.streamSettings.security == "tls" ||
                                 currentOutbound.streamSettings.security == "utls")) {
                         currentOutbound.proxySettings = OutboundObject.ProxySettingsObject().apply {
                             tag = TAG_FRAGMENT
