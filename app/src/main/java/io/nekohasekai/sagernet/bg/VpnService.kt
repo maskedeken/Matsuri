@@ -281,7 +281,7 @@ class VpnService : BaseVpnService(),
             fileDescriptor = conn.fd
             mtu = DataStore.mtu
             v2Ray = data.proxy!!.v2rayPoint
-            iPv6Mode = ipv6Mode
+            iPv6Mode = if (DataStore.resolveServer) ipv6Mode else -1
             implementation = 2 // Tun2Socket
             sniffing = DataStore.trafficSniffing
             fakeDNS = DataStore.enableFakeDns

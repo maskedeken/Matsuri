@@ -107,6 +107,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }
     var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
     var resolveDestination by configurationStore.boolean(Key.RESOLVE_DESTINATION)
+    var resolveServer by configurationStore.boolean(Key.RESOLVE_SERVER)
 
     var tcpKeepAliveInterval by configurationStore.stringToInt(Key.TCP_KEEP_ALIVE_INTERVAL) { 15 }
     var mtu by configurationStore.stringToInt(Key.MTU) { 9000 }

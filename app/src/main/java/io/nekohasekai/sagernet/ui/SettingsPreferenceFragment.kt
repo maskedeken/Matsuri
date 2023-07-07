@@ -252,6 +252,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         val resolveDestination = findPreference<SwitchPreference>(Key.RESOLVE_DESTINATION)!!
+        val resolveServer = findPreference<SwitchPreference>(Key.RESOLVE_SERVER)!!
         val acquireWakeLock = findPreference<SwitchPreference>(Key.ACQUIRE_WAKE_LOCK)!!
 
         speedInterval.onPreferenceChangeListener = reloadListener
@@ -282,6 +283,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         appTrafficStatistics.onPreferenceChangeListener = reloadListener
         resolveDestination.onPreferenceChangeListener = reloadListener
+        resolveServer.onPreferenceChangeListener = reloadListener
         acquireWakeLock.onPreferenceChangeListener = reloadListener
 
         enableTLSFragment.onPreferenceChangeListener = reloadListener
