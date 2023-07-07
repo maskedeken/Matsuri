@@ -112,11 +112,9 @@ func (t *tcpForwarder) processIPv4(ipHdr header.IPv4, tcpHdr header.TCP) {
 	if sourcePort != t.port {
 
 		key := peerKey{destinationAddress, sourcePort}
-		iSession, ok := t.sessions.Get(key)
-		if ok {
-			session = iSession.(*peerValue)
-		} else {
-			session = &peerValue{sourceAddress, destinationPort}
+		_, ok := t.sessions.Get(key)
+		if !ok {
+			session := &peerValue{sourceAddress, destinationPort}
 			t.sessions.Set(key, session)
 		}
 
@@ -160,11 +158,9 @@ func (t *tcpForwarder) processIPv6(ipHdr header.IPv6, tcpHdr header.TCP) {
 	if sourcePort != t.port {
 
 		key := peerKey{destinationAddress, sourcePort}
-		iSession, ok := t.sessions.Get(key)
-		if ok {
-			session = iSession.(*peerValue)
-		} else {
-			session = &peerValue{sourceAddress, destinationPort}
+		_, ok := t.sessions.Get(key)
+		if !ok {
+			session := &peerValue{sourceAddress, destinationPort}
 			t.sessions.Set(key, session)
 		}
 

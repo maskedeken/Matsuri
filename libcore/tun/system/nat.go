@@ -75,9 +75,11 @@ func (t *SystemTun) dispatchLoop() {
 }
 
 func (t *SystemTun) writeRawPacket(views [][]byte) tcpip.Error {
-	iovecs := make([]unix.Iovec, len(views))
-	for i, v := range views {
-		iovecs[i] = rawfile.IovecFromBytes(v)
+	iovecs := make([]unix.Iovec, 0, len(views))
+	for _, v := range views {
+		if len(v) > 0 {
+			iovecs = append(iovecs, rawfile.IovecFromBytes(v))
+		}
 	}
 	return rawfile.NonBlockingWriteIovec(t.dev, iovecs)
 }
