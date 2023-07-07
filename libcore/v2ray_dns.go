@@ -3,6 +3,7 @@ package libcore
 import (
 	"context"
 	"fmt"
+	"libcore/comm"
 	"libcore/doh"
 	"libcore/protect"
 	"net"
@@ -127,14 +128,14 @@ func setupResolvers() {
 			var ips []net.IP
 			if nekoutils.In(tryDomains, domain) {
 				switch ipv6Mode {
-				case 0: // ipv4 only
+				case comm.IPv6Disable: // ipv4 only
 					_ips, err := doh.LookupManyDoH(domain, 1)
 					if err != nil {
 						return nil, err
 					}
 
 					ips = _ips.([]net.IP)
-				case 3: // ipv6 only
+				case comm.IPv6Only: // ipv6 only
 					_ips, err := doh.LookupManyDoH(domain, 28)
 					if err != nil {
 						return nil, err
@@ -157,7 +158,7 @@ func setupResolvers() {
 					}
 
 					if ipv6Mode != -1 {
-						ips = reorderAddresses(ips, ipv6Mode == 2)
+						ips = reorderAddresses(ips, ipv6Mode == comm.IPv6Prefer)
 					}
 				}
 
@@ -167,9 +168,9 @@ func setupResolvers() {
 
 			var err error
 			optNetwork := "ip"
-			if ipv6Mode == 3 { // ipv6 only
+			if ipv6Mode == comm.IPv6Only { // ipv6 only
 				optNetwork = "ip6"
-			} else if ipv6Mode == 0 { // ipv4 only
+			} else if ipv6Mode == comm.IPv6Disable { // ipv4 only
 				optNetwork = "ip4"
 			}
 			// Have running instance?
@@ -188,8 +189,8 @@ func setupResolvers() {
 			}
 
 			switch ipv6Mode {
-			case 1, 2:
-				ips = reorderAddresses(ips, ipv6Mode == 2)
+			case comm.IPv6Enable, comm.IPv6Prefer:
+				ips = reorderAddresses(ips, ipv6Mode == comm.IPv6Prefer)
 			default:
 			}
 

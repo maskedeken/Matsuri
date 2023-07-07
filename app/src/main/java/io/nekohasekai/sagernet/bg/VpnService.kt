@@ -208,7 +208,7 @@ class VpnService : BaseVpnService(),
         val packageName = packageName
         var proxyApps = DataStore.proxyApps
         var bypass = DataStore.bypass
-        var workaroundSYSTEM = false /* DataStore.tunImplementation == TunImplementation.SYSTEM */
+        var workaroundSYSTEM = DataStore.tunImplementation == TunImplementation.SYSTEM
         var needBypassRootUid = workaroundSYSTEM || data.proxy!!.config.outboundTagsAll.values.any {
             it.nekoBean?.needBypassRootUid() == true || it.hysteriaBean?.protocol == HysteriaBean.PROTOCOL_FAKETCP
         }
@@ -282,7 +282,7 @@ class VpnService : BaseVpnService(),
             mtu = DataStore.mtu
             v2Ray = data.proxy!!.v2rayPoint
             iPv6Mode = if (DataStore.resolveServer) ipv6Mode else -1
-            implementation = 2 // Tun2Socket
+            implementation = DataStore.tunImplementation
             sniffing = DataStore.trafficSniffing
             fakeDNS = DataStore.enableFakeDns
             debug = DataStore.enableLog

@@ -32,6 +32,14 @@
             app:key="serviceMode"
             app:title="@string/service_mode"
             app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="2"
+            app:entries="@array/tun_implementation"
+            app:entryValues="@array/tun_implementation_type"
+            app:icon="@drawable/ic_baseline_flip_camera_android_24"
+            app:key="tunImplementation"
+            app:title="@string/tun_implementation"
+            app:useSimpleSummaryProvider="true" />
         <moe.matsuri.nya.ui.MTUPreference
             app:defaultValue="9000"
             app:entries="@array/mtu_select"
