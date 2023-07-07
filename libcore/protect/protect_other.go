@@ -10,7 +10,6 @@ import (
 	"syscall"
 
 	v2rayNet "github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/common/session"
 	"github.com/v2fly/v2ray-core/v5/nekoutils"
 	"github.com/v2fly/v2ray-core/v5/transport/internet"
 	"golang.org/x/sys/unix"
@@ -33,12 +32,6 @@ func (dialer ProtectedDialer) dial(ctx context.Context, source v2rayNet.Address,
 
 	if sockopt != nil {
 		internet.ApplySockopt(sockopt, destination, uintptr(fd), ctx)
-
-		if destination.Network == v2rayNet.Network_TCP && sockopt.TcpNoDelay {
-			if err = syscall.SetsockoptInt(int(fd), syscall.IPPROTO_TCP, unix.TCP_NODELAY, 1); err != nil {
-				newError("failed to set TCP_NODELAY").Base(err).WriteToLog(session.ExportIDToError(ctx))
-			}
-		}
 	}
 
 	// SO_SNDTIMEO default is 75s
