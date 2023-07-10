@@ -288,7 +288,7 @@ func (t *Tun2ray) udpHandleUplink() {
 func (t *Tun2ray) udpHandleUplinkInternal(p *tun.UDPPacket) {
 	natKey := p.Src.String()
 
-	sendTo := func(firstPkt bool) bool {
+	sendTo := func() bool {
 		conn := t.udpTable.Get(natKey)
 		if conn == nil {
 			return false
@@ -297,9 +297,6 @@ func (t *Tun2ray) udpHandleUplinkInternal(p *tun.UDPPacket) {
 		if p.Put != nil {
 			p.Put()
 		}
-		if !firstPkt && p.PutHeader != nil {
-			p.PutHeader() // only keep this for firstPkt
-		}
 		if err != nil {
 			_ = conn.Close()
 		}
@@ -307,7 +304,7 @@ func (t *Tun2ray) udpHandleUplinkInternal(p *tun.UDPPacket) {
 	}
 
 	// cached udp conn
-	if sendTo(false) {
+	if sendTo() {
 		return
 	}
 
@@ -319,7 +316,7 @@ func (t *Tun2ray) udpHandleUplinkInternal(p *tun.UDPPacket) {
 	if loaded {
 		cond.L.Lock()
 		cond.Wait()
-		sendTo(false)
+		sendTo()
 		cond.L.Unlock()
 		return
 	}
@@ -477,7 +474,7 @@ func (t *Tun2ray) udpHandleUplinkInternal(p *tun.UDPPacket) {
 	cond.Broadcast()
 
 	// uplink
-	sendTo(true)
+	sendTo()
 
 	// wait for connection ends
 	go func() {

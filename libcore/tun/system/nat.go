@@ -2,6 +2,7 @@ package system
 
 import (
 	"os"
+	"time"
 
 	"libcore/tun"
 
@@ -46,6 +47,7 @@ func New(dev int32, mtu int32, handler tun.Handler, ipv6Mode int32, errorHandler
 		return nil, err
 	}
 	go tcpServer.dispatchLoop()
+	go tcpServer.sessionCheckLoop(time.Second * 60)
 	t.tcpForwarder = tcpServer
 
 	go t.dispatchLoop()

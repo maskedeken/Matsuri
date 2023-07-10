@@ -39,8 +39,14 @@ func (t *SystemTun) processIPv4UDP(cache *buf.Buffer, ipHdr header.IPv4, hdr hea
 		Data:      cache.Bytes(),
 		PutHeader: headerCache.Release,
 		WriteBack: func(bytes []byte, addr *net.UDPAddr) (int, error) {
-			newHeader := make([]byte, headerCache.Len())
-			copy(newHeader, headerCache.Bytes())
+			index := headerCache.Len()
+			newHeader := headerCache.ExtendCopy(headerCache.Bytes())
+			headerCache.Advance(index)
+
+			defer func() {
+				headerCache.Clear()
+				headerCache.Resize(0, index)
+			}()
 
 			var newSourceAddress tcpip.Address
 			var newSourcePort uint16
@@ -103,8 +109,14 @@ func (t *SystemTun) processIPv6UDP(cache *buf.Buffer, ipHdr header.IPv6, hdr hea
 		Data:      cache.Bytes(),
 		PutHeader: headerCache.Release,
 		WriteBack: func(bytes []byte, addr *net.UDPAddr) (int, error) {
-			newHeader := make([]byte, headerCache.Len())
-			copy(newHeader, headerCache.Bytes())
+			index := headerCache.Len()
+			newHeader := headerCache.ExtendCopy(headerCache.Bytes())
+			headerCache.Advance(index)
+
+			defer func() {
+				headerCache.Clear()
+				headerCache.Resize(0, index)
+			}()
 
 			var newSourceAddress tcpip.Address
 			var newSourcePort uint16
