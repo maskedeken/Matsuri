@@ -13,7 +13,6 @@ import (
 	"github.com/sagernet/gvisor/pkg/tcpip/link/rawfile"
 	"github.com/sagernet/gvisor/pkg/tcpip/stack"
 	"github.com/v2fly/v2ray-core/v5/common/buf"
-	"golang.org/x/sys/unix"
 )
 
 //go:generate go run ../errorgen
@@ -74,16 +73,6 @@ func (t *SystemTun) dispatchLoop() {
 			data = cache.Extend(buf.Size)
 		}
 	}
-}
-
-func (t *SystemTun) writeRawPacket(views [][]byte) tcpip.Error {
-	iovecs := make([]unix.Iovec, 0, len(views))
-	for _, v := range views {
-		if len(v) > 0 {
-			iovecs = append(iovecs, rawfile.IovecFromBytes(v))
-		}
-	}
-	return rawfile.NonBlockingWriteIovec(t.dev, iovecs)
 }
 
 func (t *SystemTun) writeBuffer(bytes []byte) tcpip.Error {

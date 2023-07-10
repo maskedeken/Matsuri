@@ -482,9 +482,6 @@ func (t *Tun2ray) udpHandleUplinkInternal(p *tun.UDPPacket) {
 		<-conn.ctx.Done()
 
 		// close
-		if p.PutHeader != nil {
-			p.PutHeader()
-		}
 		comm.CloseIgnore(conn)
 		t.udpTable.Delete(natKey)
 	}()

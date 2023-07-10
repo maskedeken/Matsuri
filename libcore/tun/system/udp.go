@@ -29,24 +29,20 @@ func (t *SystemTun) processIPv4UDP(cache *buf.Buffer, ipHdr header.IPv4, hdr hea
 	hdr.SetDestinationPort(sourcePort)
 
 	headerLength := ipHdr.HeaderLength()
-	headerCache := buf.New()
-	headerCache.Write(ipHdr[:headerLength+header.UDPMinimumSize])
+	headerCache := make([]byte, headerLength+header.UDPMinimumSize)
+	copy(headerCache, ipHdr[:headerLength+header.UDPMinimumSize])
 
 	cache.Advance(int32(headerLength + header.UDPMinimumSize))
 	t.handler.HandlePacket(&tun.UDPPacket{
-		Src:       source,
-		Dst:       destination,
-		Data:      cache.Bytes(),
-		PutHeader: headerCache.Release,
+		Src:  source,
+		Dst:  destination,
+		Data: cache.Bytes(),
 		WriteBack: func(bytes []byte, addr *net.UDPAddr) (int, error) {
-			index := headerCache.Len()
-			newHeader := headerCache.ExtendCopy(headerCache.Bytes())
-			headerCache.Advance(index)
+			reply := buf.New()
+			defer reply.Release()
 
-			defer func() {
-				headerCache.Clear()
-				headerCache.Resize(0, index)
-			}()
+			reply.Write(headerCache)
+			reply.Write(bytes)
 
 			var newSourceAddress tcpip.Address
 			var newSourcePort uint16
@@ -59,19 +55,19 @@ func (t *SystemTun) processIPv4UDP(cache *buf.Buffer, ipHdr header.IPv4, hdr hea
 				newSourcePort = destinationPort
 			}
 
-			newIpHdr := header.IPv4(newHeader)
+			newIpHdr := header.IPv4(reply.Bytes())
 			newIpHdr.SetSourceAddress(newSourceAddress)
-			newIpHdr.SetTotalLength(uint16(int(headerCache.Len()) + len(bytes)))
+			newIpHdr.SetTotalLength(uint16(len(headerCache) + len(bytes)))
 			newIpHdr.SetChecksum(0)
 			newIpHdr.SetChecksum(^newIpHdr.CalculateChecksum())
 
-			udpHdr := header.UDP(headerCache.BytesFrom(headerCache.Len() - header.UDPMinimumSize))
+			udpHdr := header.UDP(reply.BytesFrom(int32(headerLength)))
 			udpHdr.SetSourcePort(newSourcePort)
 			udpHdr.SetLength(uint16(header.UDPMinimumSize + len(bytes)))
 			udpHdr.SetChecksum(0)
 			udpHdr.SetChecksum(^udpHdr.CalculateChecksum(checksum.Checksum(bytes, header.PseudoHeaderChecksum(header.UDPProtocolNumber, newSourceAddress, sourceAddress, uint16(header.UDPMinimumSize+len(bytes))))))
 
-			if err := t.writeRawPacket([][]byte{newHeader, bytes}); err != nil {
+			if err := t.writeBuffer(reply.Bytes()); err != nil {
 				return 0, newError(err.String())
 			}
 
@@ -99,24 +95,20 @@ func (t *SystemTun) processIPv6UDP(cache *buf.Buffer, ipHdr header.IPv6, hdr hea
 	hdr.SetDestinationPort(sourcePort)
 
 	headerLength := uint16(len(ipHdr)) - ipHdr.PayloadLength()
-	headerCache := buf.New()
-	headerCache.Write(ipHdr[:headerLength+header.UDPMinimumSize])
+	headerCache := make([]byte, headerLength+header.UDPMinimumSize)
+	copy(headerCache, ipHdr[:headerLength+header.UDPMinimumSize])
 
 	cache.Advance(int32(headerLength + header.UDPMinimumSize))
 	t.handler.HandlePacket(&tun.UDPPacket{
-		Src:       source,
-		Dst:       destination,
-		Data:      cache.Bytes(),
-		PutHeader: headerCache.Release,
+		Src:  source,
+		Dst:  destination,
+		Data: cache.Bytes(),
 		WriteBack: func(bytes []byte, addr *net.UDPAddr) (int, error) {
-			index := headerCache.Len()
-			newHeader := headerCache.ExtendCopy(headerCache.Bytes())
-			headerCache.Advance(index)
+			reply := buf.New()
+			defer reply.Release()
 
-			defer func() {
-				headerCache.Clear()
-				headerCache.Resize(0, index)
-			}()
+			reply.Write(headerCache)
+			reply.Write(bytes)
 
 			var newSourceAddress tcpip.Address
 			var newSourcePort uint16
@@ -129,17 +121,17 @@ func (t *SystemTun) processIPv6UDP(cache *buf.Buffer, ipHdr header.IPv6, hdr hea
 				newSourcePort = destinationPort
 			}
 
-			newIpHdr := header.IPv6(newHeader)
+			newIpHdr := header.IPv6(reply.Bytes())
 			newIpHdr.SetSourceAddress(newSourceAddress)
 			newIpHdr.SetPayloadLength(uint16(header.UDPMinimumSize + len(bytes)))
 
-			udpHdr := header.UDP(headerCache.BytesFrom(headerCache.Len() - header.UDPMinimumSize))
+			udpHdr := header.UDP(reply.BytesFrom(int32(headerLength)))
 			udpHdr.SetSourcePort(newSourcePort)
 			udpHdr.SetLength(uint16(header.UDPMinimumSize + len(bytes)))
 			udpHdr.SetChecksum(0)
 			udpHdr.SetChecksum(^udpHdr.CalculateChecksum(checksum.Checksum(bytes, header.PseudoHeaderChecksum(header.UDPProtocolNumber, newSourceAddress, sourceAddress, uint16(header.UDPMinimumSize+len(bytes))))))
 
-			if err := t.writeRawPacket([][]byte{headerCache.Bytes(), bytes}); err != nil {
+			if err := t.writeBuffer(reply.Bytes()); err != nil {
 				return 0, newError(err.String())
 			}
 

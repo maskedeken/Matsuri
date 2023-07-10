@@ -19,7 +19,6 @@ type UDPPacket struct {
 	Dst       *net.UDPAddr
 	Data      []byte
 	Put       func() // put cache for a packet
-	PutHeader func() // put cache for a connection(header)
 	WriteBack WriteBackFunc
 }
 
