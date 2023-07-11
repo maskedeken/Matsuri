@@ -149,7 +149,6 @@ func (t *tcpForwarder) dispatch() (bool, error) {
 	}
 
 	go t.tun.handler.NewConnection(source, destination, conn)
-
 	return false, nil
 }
 
