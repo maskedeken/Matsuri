@@ -7,7 +7,6 @@ import (
 	"libcore/protect"
 	"libcore/tun"
 	"libcore/tun/tuns"
-	"math"
 	"net"
 	"os"
 	"sync"
@@ -96,7 +95,7 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 	}
 	var err error
 	if config.Implementation == 0 { // gvisor
-		t.dev, err = tuns.NewGvisor(config.FileDescriptor, config.MTU, t, 0x01, math.MaxUint32, config.IPv6Mode)
+		t.dev, err = tuns.NewGvisor(config.FileDescriptor, config.MTU, t, 0x01, config.IPv6Mode)
 	} else if config.Implementation == 1 { // SYSTEM
 		t.dev, err = tuns.NewSystem(config.FileDescriptor, config.MTU, t, config.IPv6Mode, config.ErrorHandler.HandleError)
 	} else if config.Implementation == 2 { // Tun2Socket

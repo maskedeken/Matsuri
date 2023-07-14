@@ -33,7 +33,7 @@ func (t *GVisor) Stop() {
 
 const DefaultNIC tcpip.NICID = 0x01
 
-func New(endpoint stack.LinkEndpoint, handler tun.Handler, nicId tcpip.NICID, snapLen uint32, ipv6Mode int32) (*GVisor, error) {
+func New(endpoint stack.LinkEndpoint, handler tun.Handler, nicId tcpip.NICID, ipv6Mode int32) (*GVisor, error) {
 	// endpoint, _ := newRwEndpoint(dev, mtu)
 	var o stack.Options
 	switch ipv6Mode {
