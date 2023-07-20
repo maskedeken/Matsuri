@@ -18,6 +18,7 @@ import (
 	"github.com/sirupsen/logrus"
 	core "github.com/v2fly/v2ray-core/v5"
 	"github.com/v2fly/v2ray-core/v5/common/buf"
+	"github.com/v2fly/v2ray-core/v5/common/errors"
 	v2rayNet "github.com/v2fly/v2ray-core/v5/common/net"
 	"github.com/v2fly/v2ray-core/v5/common/session"
 	"github.com/v2fly/v2ray-core/v5/transport"
@@ -258,7 +259,14 @@ type connReaderWriter struct {
 func (r *connReaderWriter) ReadMultiBufferTimeout(t time.Duration) (buf.MultiBuffer, error) {
 	r.SetReadDeadline(time.Now().Add(t))
 	defer r.SetReadDeadline(time.Time{})
-	return r.ReadMultiBuffer()
+	mb, err := r.ReadMultiBuffer()
+	if err != nil {
+		if nerr, ok := errors.Cause(err).(net.Error); ok && nerr.Timeout() {
+			return nil, buf.ErrReadTimeout
+		}
+		return nil, err
+	}
+	return mb, nil
 }
 
 func (r *connReaderWriter) Interrupt() {
