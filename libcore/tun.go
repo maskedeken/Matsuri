@@ -475,7 +475,7 @@ func (t *Tun2ray) udpHandleUplinkInternal(p *tun.UDPPacket) {
 	}
 
 	// [FakeDNS] [UDP] must fake ip & no endpoint change
-	if tun.FAKEDNS_VLAN4_CLIENT_IPNET.Contains(destination.Address.IP()) {
+	if tun.FAKEDNS_VLAN4_CLIENT_IPNET.Contains(destination.Address.IP()) || tun.FAKEDNS_VLAN6_CLIENT_IPNET.Contains(destination.Address.IP()) {
 		conn.fake = true
 	}
 

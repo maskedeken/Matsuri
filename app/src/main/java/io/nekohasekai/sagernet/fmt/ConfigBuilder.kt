@@ -155,6 +155,10 @@ fun buildV2RayConfig(
                     ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/15"
                     poolSize = 65535
                 })
+                fakedns.add(FakeDnsObject().apply {
+                    ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/18"
+                    poolSize = 65535
+                })
                 remoteDns = listOf("fakedns")
             }
 
