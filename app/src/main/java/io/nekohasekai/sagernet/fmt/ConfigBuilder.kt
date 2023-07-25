@@ -1158,7 +1158,7 @@ fun buildV2RayConfig(
                 address = address.substringAfter("://")
             }
             "https://$address".toHttpUrlOrNull()?.apply {
-                if (!host.isIpAddress()) {
+                if (!host.isIpAddress() && host != "fakedns") {
                     directLookupDomain.add("full:$host")
                 }
             }
