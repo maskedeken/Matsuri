@@ -3,22 +3,22 @@ module libcore
 go 1.18
 
 require (
-	github.com/Dreamacro/clash v1.9.0
-	github.com/miekg/dns v1.1.51
+	github.com/Dreamacro/clash v1.17.0
+	github.com/miekg/dns v1.1.55
 	github.com/sagernet/gvisor v0.0.0-20230627031050-1ab0276e0dd2
 	github.com/sagernet/libping v0.1.1
-	github.com/sirupsen/logrus v1.8.1
-	github.com/ulikunitz/xz v0.5.10
+	github.com/sirupsen/logrus v1.9.3
+	github.com/ulikunitz/xz v0.5.11
 	github.com/v2fly/v2ray-core/v5 v5.0.0
-	go.uber.org/automaxprocs v1.4.0
-	golang.org/x/mobile v0.0.0-20220722155234-aaac322e2105
-	golang.org/x/sys v0.9.0
+	go.uber.org/automaxprocs v1.5.3
+	golang.org/x/mobile v0.0.0-20230531173138-3c911d8e3eda
+	golang.org/x/sys v0.10.0
 )
 
 replace github.com/v2fly/v2ray-core/v5 v5.0.0 => ../../v2ray-core
 
 require (
-	github.com/Dreamacro/go-shadowsocks2 v0.1.7 // indirect
+	github.com/Dreamacro/protobytes v0.0.0-20230617041236-6500a9f4f158 // indirect
 	github.com/adrg/xdg v0.4.0 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
@@ -50,13 +50,13 @@ require (
 	github.com/xtaci/smux v1.5.16 // indirect
 	go.starlark.net v0.0.0-20220817180228-f738f5508c12 // indirect
 	go4.org/netipx v0.0.0-20220925034521-797b0c90d8ab // indirect
-	golang.org/x/crypto v0.6.0 // indirect
+	golang.org/x/crypto v0.10.0 // indirect
 	golang.org/x/exp v0.0.0-20221205204356-47842c84f3db // indirect
 	golang.org/x/mod v0.11.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/net v0.11.0 // indirect
+	golang.org/x/text v0.10.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
-	golang.org/x/tools v0.3.0 // indirect
+	golang.org/x/tools v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
 	google.golang.org/grpc v1.53.0 // indirect
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8 // indirect
