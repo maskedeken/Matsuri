@@ -1165,21 +1165,25 @@ fun buildV2RayConfig(
         }
 
         // dns object user rules
-        if (enableDnsRouting) {
+        if (enableDnsRouting && !useFakeDns) {
             dns.servers[0].valueY?.uidList = uidListDNSRemote.toHashSet().toList()
             dns.servers[0].valueY?.domains = domainListDNSRemote.toHashSet().toList()
             directLookupDomain += domainListDNSDirect
         }
 
         // add directDNS objects here
-        if (directLookupDomain.isNotEmpty() || uidListDNSDirect.isNotEmpty()) dns.servers.addAll(
+        if (directLookupDomain.isNotEmpty() || !useFakeDns && uidListDNSDirect.isNotEmpty()) dns.servers.addAll(
             directDNS.map {
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
                         address = it.replace("https://", "https+local://")
                         domains = directLookupDomain.toList()
-                        uidList = uidListDNSDirect.toHashSet().toList()
-                        fallbackStrategy = "disabled"
+
+                        if (!useFakeDns) {
+                            uidList = uidListDNSDirect.toHashSet().toList()
+                            fallbackStrategy = "disabled"
+                        }
+
                         applyDNSNetworkSettings(true)
                     }
                 }
