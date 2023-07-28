@@ -4,13 +4,12 @@ import (
 	"context"
 	"net"
 	"runtime"
-	"time"
 	_ "unsafe"
 
 	"github.com/sirupsen/logrus"
 	"github.com/v2fly/v2ray-core/v5/common/buf"
 	v2rayNet "github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/features/dns"
+	"github.com/v2fly/v2ray-core/v5/common/session"
 	"github.com/v2fly/v2ray-core/v5/transport/internet"
 )
 
@@ -51,39 +50,48 @@ func (dialer ProtectedDialer) Dial(ctx context.Context, source v2rayNet.Address,
 		return nil, newError("invalid destination")
 	}
 
-	var ips []net.IP
-	if destination.Address.Family().IsDomain() {
-		if dialer.Resolver == nil {
-			return nil, newError("no resolver")
-		}
-		ips, err = dialer.Resolver(destination.Address.Domain())
-		if err == nil && len(ips) == 0 {
-			err = dns.ErrEmptyResponse
-		}
-		if err != nil {
-			return nil, err
-		}
-	} else {
+	if destination.Address.Family().IsIP() {
 		ip := destination.Address.IP()
 		if ip.IsLoopback() { // is it more effective
 			return v2rayDefaultDialer.Dial(ctx, source, destination, sockopt)
 		}
-		ips = append(ips, ip)
+		return dialer.dial(ctx, source, destination, sockopt)
 	}
 
-	for i, ip := range ips {
-		if i > 0 {
-			if err == nil {
-				break
-			} else {
-				logrus.Warn("dial system failed: ", err)
-				time.Sleep(time.Millisecond * 200)
-			}
-			logrus.Debug("trying next address: ", ip.String())
+	if dialer.Resolver == nil {
+		return nil, newError("no resolver")
+	}
+
+	ob := session.OutboundFromContext(ctx)
+	if ob == nil {
+		return nil, newError("outbound is not specified")
+	}
+
+	r := ob.Resolved
+	if r == nil {
+		var ips []net.IP
+		ips, err = dialer.Resolver(destination.Address.Domain())
+		if err != nil {
+			return nil, err
 		}
-		destination.Address = v2rayNet.IPAddress(ip)
-		conn, err = dialer.dial(ctx, source, destination, sockopt)
+
+		r = &session.Resolved{
+			IPs: ips,
+		}
+		ob.Resolved = r
 	}
 
-	return conn, err
+	ip := r.CurrentIP()
+	if ip == nil {
+		return nil, newError("no IP specified")
+	}
+
+	destination.Address = v2rayNet.IPAddress(ip)
+	conn, err = dialer.dial(ctx, source, destination, sockopt)
+	if err != nil {
+		r.NextIP()
+		return nil, err
+	}
+
+	return
 }
