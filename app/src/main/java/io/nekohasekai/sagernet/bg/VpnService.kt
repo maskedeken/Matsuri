@@ -1,4 +1,4 @@
-/******************************************************************************
+git /******************************************************************************
  *                                                                            *
  * Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>             *
  * Copyright (C) 2021 by Max Lv <max.c.lv@gmail.com>                          *
@@ -287,7 +287,7 @@ class VpnService : BaseVpnService(),
             fileDescriptor = conn.fd
             mtu = DataStore.mtu
             v2Ray = data.proxy!!.v2rayPoint
-            iPv6Mode = if (DataStore.resolveServer) ipv6Mode else -1
+            iPv6Mode = ipv6Mode
             implementation = DataStore.tunImplementation
             sniffing = DataStore.trafficSniffing
             fakeDNS = DataStore.enableFakeDns

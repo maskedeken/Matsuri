@@ -86,7 +86,6 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 
 	// setup resolver first
 	underlyingResolver.sekaiResolver = config.LocalResolver
-	ipv6Mode = config.IPv6Mode
 	if t.fdProtector != nil {
 		protect.FdProtector = t.fdProtector
 	}

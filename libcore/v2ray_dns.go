@@ -3,7 +3,6 @@ package libcore
 import (
 	"context"
 	"fmt"
-	"libcore/comm"
 	"libcore/doh"
 	"libcore/protect"
 	"net"
@@ -31,7 +30,6 @@ var underlyingDialer = &protect.ProtectedDialer{
 		return underlyingResolver.LookupIP("ip", domain)
 	},
 }
-var ipv6Mode int32 // 0:disabled, 1:enabled, 2:prefer, 3:only, -1:ignore
 
 // sekaiResolver
 type LocalResolver interface {
@@ -92,18 +90,6 @@ func (p *simpleSekaiWrapper) LookupIP(network, host string) (ret []net.IP, err e
 	}
 }
 
-func reorderAddresses(ips []net.IP, preferIPv6 bool) []net.IP {
-	var result []net.IP
-	for i := 0; i < 2; i++ {
-		for _, ip := range ips {
-			if (preferIPv6 == (i == 0)) == (ip.To4() == nil) {
-				result = append(result, ip)
-			}
-		}
-	}
-	return result
-}
-
 func setupResolvers() {
 	// golang lookup -> System
 	net.DefaultResolver = systemResolver
@@ -125,79 +111,31 @@ func setupResolvers() {
 				return ips, nil
 			}
 
-			var ips []net.IP
 			if nekoutils.In(tryDomains, domain) {
-				switch ipv6Mode {
-				case comm.IPv6Disable: // ipv4 only
-					_ips, err := doh.LookupManyDoH(domain, 1)
+				// first try A
+				_ips, err := doh.LookupManyDoH(domain, 1)
+				if err != nil {
+					// then try AAAA
+					_ips, err = doh.LookupManyDoH(domain, 28)
 					if err != nil {
 						return nil, err
-					}
-
-					ips = _ips.([]net.IP)
-				case comm.IPv6Only: // ipv6 only
-					_ips, err := doh.LookupManyDoH(domain, 28)
-					if err != nil {
-						return nil, err
-					}
-
-					ips = _ips.([]net.IP)
-				default:
-					_ips4, err := doh.LookupManyDoH(domain, 1)
-					if err == nil {
-						ips = append(ips, _ips4.([]net.IP)...)
-					}
-
-					_ips6, err2 := doh.LookupManyDoH(domain, 28)
-					if err2 == nil {
-						ips = append(ips, _ips6.([]net.IP)...)
-					}
-
-					if err != nil && err2 != nil {
-						return nil, err2
-					}
-
-					if ipv6Mode != -1 {
-						ips = reorderAddresses(ips, ipv6Mode == comm.IPv6Prefer)
 					}
 				}
-
+				ips := _ips.([]net.IP)
 				staticHosts[domain] = ips
 				return ips, nil
 			}
 
-			var err error
-			optNetwork := "ip"
-			if ipv6Mode == comm.IPv6Only { // ipv6 only
-				optNetwork = "ip6"
-			} else if ipv6Mode == comm.IPv6Disable { // ipv4 only
-				optNetwork = "ip4"
-			}
 			// Have running instance?
 			ptr := (*dns_feature.Client)(atomic.LoadPointer(&v2rayDNSClient))
 			if ptr != nil && *ptr != nil {
-				ips, err = (*ptr).LookupIP(&dns_feature.MatsuriDomainStringEx{
+				return (*ptr).LookupIP(&dns_feature.MatsuriDomainStringEx{
 					Domain:     domain,
-					OptNetwork: optNetwork,
+					OptNetwork: "ip",
 				})
 			} else {
-				ips, err = systemResolver.LookupIP(context.Background(), optNetwork, domain)
+				return systemResolver.LookupIP(context.Background(), "ip", domain)
 			}
-
-			if err != nil {
-				return nil, err
-			}
-
-			switch ipv6Mode {
-			case comm.IPv6Enable, comm.IPv6Prefer:
-				ips = reorderAddresses(ips, ipv6Mode == comm.IPv6Prefer)
-			default:
-			}
-
-			if ipv6Mode > -1 {
-				newError("resolved ips: ", ips, " according to the IPv6 policy").AtDebug().WriteToLog()
-			}
-			return ips, nil
 		},
 	})
 
