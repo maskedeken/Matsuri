@@ -291,8 +291,6 @@ fun buildV2RayConfig(
         // init routing object
         // set rules for wsUseBrowserForwarder and bypass LAN
         routing = RoutingObject().apply {
-            domainStrategy = DataStore.domainStrategy
-
             rules = mutableListOf()
 
             val wsRules = HashMap<String, RoutingObject.RuleObject>()
@@ -335,6 +333,17 @@ fun buildV2RayConfig(
             }
         }
 
+        // v2sekai's outbound domainStrategy
+        fun genDestStrategy(noAsIs: Boolean): String {
+            return when {
+                !resolveDestination && !noAsIs -> "AsIs"
+                ipv6Mode == IPv6Mode.DISABLE -> "UseIPv4"
+                ipv6Mode == IPv6Mode.PREFER -> "PreferIPv6"
+                ipv6Mode == IPv6Mode.ONLY -> "UseIPv6"
+                else -> "PreferIPv4"
+            }
+        }
+
         // returns outbound tag
         fun buildChain(
             chainId: Long, profileList: List<ProxyEntity>
@@ -352,18 +361,7 @@ fun buildV2RayConfig(
             val chainTag = "c-$chainId"
             var muxApplied = false
 
-            // v2sekai's outbound domainStrategy
-            fun genDomainStrategy(noAsIs: Boolean): String {
-                return when {
-                    !resolveDestination && !noAsIs -> "AsIs"
-                    ipv6Mode == IPv6Mode.DISABLE -> "UseIPv4"
-                    ipv6Mode == IPv6Mode.PREFER -> "PreferIPv6"
-                    ipv6Mode == IPv6Mode.ONLY -> "UseIPv6"
-                    else -> "PreferIPv4"
-                }
-            }
-
-            var currentDomainStrategy = genDomainStrategy(false)
+            var currentDestStrategy = genDestStrategy(false)
 
             profileList.forEachIndexed { index, proxyEntity ->
                 val bean = proxyEntity.requireBean()
@@ -526,8 +524,8 @@ fun buildV2RayConfig(
                                                         when (bean.packetEncoding) {
                                                             1 -> {
                                                                 packetEncoding = "packet"
-                                                                currentDomainStrategy =
-                                                                    genDomainStrategy(
+                                                                currentDestStrategy =
+                                                                    genDestStrategy(
                                                                         true
                                                                     )
                                                             }
@@ -851,16 +849,13 @@ fun buildV2RayConfig(
 
                 pastEntity?.requireBean()?.apply {
                     // don't loopback
-                    if (currentDomainStrategy != "AsIs" && !serverAddress.isIpAddress()) {
+                    if (currentDestStrategy != "AsIs" && !serverAddress.isIpAddress()) {
                         domainListDNSDirect.add("full:$serverAddress")
                     }
                 }
-                if (forTest) {
-                    currentDomainStrategy = "AsIs"
-                }
 
                 currentOutbound.tag = tagOut
-                currentOutbound.domainStrategy = currentDomainStrategy
+                currentOutbound.destinationStrategy = currentDestStrategy
 
                 // External proxy need a dokodemo-door inbound to forward the traffic
                 // For external proxy software, their traffic must goes to v2ray-core to use protected fd.
@@ -1042,9 +1037,15 @@ fun buildV2RayConfig(
 
         }
 
-        for (freedom in arrayOf(TAG_DIRECT, TAG_BYPASS)) outbounds.add(OutboundObject().apply {
-            tag = freedom
+        outbounds.add(OutboundObject().apply {
+            tag = TAG_DIRECT
             protocol = "freedom"
+        })
+
+        outbounds.add(OutboundObject().apply {
+            tag = TAG_BYPASS
+            protocol = "freedom"
+            destinationStrategy = genDestStrategy(false)
         })
 
         if (DataStore.enableTLSFragment) {

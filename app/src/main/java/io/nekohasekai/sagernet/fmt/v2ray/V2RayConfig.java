@@ -282,6 +282,8 @@ public class V2RayConfig {
         public ProxySettingsObject proxySettings;
         public MuxObject mux;
         public String domainStrategy;
+
+        public String destinationStrategy;
         public Long fallbackDelayMs;
 
         public void init() {
