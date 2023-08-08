@@ -23,10 +23,23 @@
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/password" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="tls"
+            app:entries="@array/trojan_go_transport_layer_encryption_entry"
+            app:entryValues="@array/trojan_go_transport_layer_encryption_value"
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="serverSecurity"
+            app:title="@string/security"
+            app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_action_copyright"
             app:key="serverSNI"
             app:title="@string/sni"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_legend_toggle_24"
+            app:key="serverALPN"
+            app:title="@string/alpn"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_notification_enhanced_encryption"
@@ -50,6 +63,16 @@
             app:icon="@drawable/ic_baseline_texture_24"
             app:key="realityShortId"
             app:title="Reality ShortId"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="jlsPassword"
+            app:title="@string/jls_password"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_texture_24"
+            app:key="jlsRandom"
+            app:title="@string/jls_random"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="none"

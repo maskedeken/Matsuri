@@ -525,4 +525,7 @@ Anyone can write advanced plugins, which can control Matsuri. please download an
 
     <string name="protocol_version">Protocol Version</string>
     <string name="enable_tls_fragment">Enable TLS Client Hello Fragment</string>
+
+    <string name="jls_password">JLS Password</string>
+    <string name="jls_random">JLS IV</string>
 </resources>

@@ -488,4 +488,7 @@
     <string name="enable_tls_fragment">启用TLS Client Hello分片</string>
     <string name="auto_select_proxy_apps">自动选择需要代理的应用</string>
     <string name="auto_select_proxy_apps_message">自动选择需要代理的应用，这将清除您当前的选择。</string>
+
+    <string name="jls_password">JLS密码</string>
+    <string name="jls_random">JLS随机数</string>
 </resources>

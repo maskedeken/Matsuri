@@ -40,6 +40,12 @@ fun parseTrojanGo(server: String): TrojanGoBean {
         serverAddress = link.host
         serverPort = link.port
         password = link.username
+        link.queryParameter("security")?.let {
+            serverSecurity = it
+        }
+        link.queryParameter("alpn")?.let {
+            alpn = it
+        }
         link.queryParameter("sni")?.let {
             sni = it
         }
@@ -51,6 +57,12 @@ fun parseTrojanGo(server: String): TrojanGoBean {
         }
         link.queryParameter("sid")?.let {
             realityShortId = it
+        }
+        link.queryParameter("pwd")?.let {
+            jlsPassword = it
+        }
+        link.queryParameter("iv")?.let {
+            jlsRandom = it
         }
         link.queryParameter("type")?.let { lType ->
             type = lType
@@ -82,6 +94,12 @@ fun parseTrojanGo(server: String): TrojanGoBean {
 
 fun TrojanGoBean.toUri(): String {
     val builder = linkBuilder().username(password).host(serverAddress).port(serverPort)
+    if (serverSecurity.isNotBlank()) {
+        builder.addQueryParameter("security", serverSecurity)
+    }
+    if (alpn.isNotBlank()) {
+        builder.addQueryParameter("alpn", alpn)
+    }
     if (sni.isNotBlank()) {
         builder.addQueryParameter("sni", sni)
     }
@@ -93,6 +111,12 @@ fun TrojanGoBean.toUri(): String {
     }
     if (realityShortId.isNotBlank()) {
         builder.addQueryParameter("sid", realityShortId)
+    }
+    if (jlsPassword.isNotBlank()) {
+        builder.addQueryParameter("pwd", jlsPassword)
+    }
+    if (jlsRandom.isNotBlank()) {
+        builder.addQueryParameter("iv", jlsRandom)
     }
     if (type.isNotBlank() && type != "original") {
         builder.addQueryParameter("type", type)
@@ -159,11 +183,30 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
             if (sni.isNotBlank()) put("sni", sni)
             if (fingerprint.isNotBlank()) put("fingerprint", fingerprint)
             if (allowInsecure) put("verify", false)
-            if (realityPubKey.isNotBlank()) put("reality", JSONObject().apply {
-                put("enabled", true)
-                put("public_key", realityPubKey)
-                put("short_id", realityShortId)
-            })
+            if (alpn.isNotBlank()) {
+                put("alpn", JSONArray().apply {
+                    alpn.split("\n")
+                        .filter { it.isNotBlank() }
+                        .forEach { put(it) }
+                })
+            }
+            when (serverSecurity) {
+                "reality" -> {
+                    if (realityPubKey.isNotBlank() && realityShortId.isNotBlank()) put("reality", JSONObject().apply {
+                        put("enabled", true)
+                        put("public_key", realityPubKey)
+                        put("short_id", realityShortId)
+                    })
+                }
+                "jls" -> {
+                    if (jlsPassword.isNotBlank() && jlsRandom.isNotBlank()) put("jls", JSONObject().apply {
+                        put("enabled", true)
+                        put("password", jlsPassword)
+                        put("random", jlsRandom)
+                    })
+                }
+            }
+
         })
 
         when {
@@ -205,10 +248,19 @@ fun JSONObject.parseTrojanGo(): TrojanGoBean {
         optJSONArray("ssl")?.apply {
             sni = optString("sni", sni)
             fingerprint = optString("fingerprint", fingerprint)
+            serverSecurity = "tls"
             optJSONArray("reality")?.apply {
                 if (optBoolean("enabled", false)) {
+                    serverSecurity = "reality"
                     realityPubKey = optString("public_key", realityPubKey)
                     realityShortId = optString("short_id", realityShortId)
+                }
+            }
+            optJSONArray("jls")?.apply {
+                if (optBoolean("enabled", false)) {
+                    serverSecurity = "jls"
+                    jlsPassword = optString("password", jlsPassword)
+                    jlsRandom = optString("random", jlsRandom)
                 }
             }
         }

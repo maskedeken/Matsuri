@@ -121,6 +121,20 @@ public class TrojanGoBean extends AbstractBean {
 
     // --------------------------------------- //
 
+    // --------------------------------------- jls
+
+
+    public String jlsPassword;
+
+    public String jlsRandom;
+
+
+    // --------------------------------------- //
+
+    public String serverSecurity;
+
+    public String alpn;
+
     @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
@@ -136,11 +150,15 @@ public class TrojanGoBean extends AbstractBean {
         if (fingerprint == null) fingerprint = "chrome";
         if (realityPubKey == null) realityPubKey = "";
         if (realityShortId == null) realityShortId = "";
+        if (serverSecurity == null) serverSecurity = "tls";
+        if (alpn == null) alpn = "";
+        if (jlsPassword == null) jlsPassword = "";
+        if (jlsRandom == null) jlsRandom = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(3);
+        output.writeInt(4);
         super.serialize(output);
         output.writeString(password);
         output.writeString(sni);
@@ -159,6 +177,10 @@ public class TrojanGoBean extends AbstractBean {
         output.writeString(fingerprint);
         output.writeString(realityPubKey);
         output.writeString(realityShortId);
+        output.writeString(serverSecurity);
+        output.writeString(alpn);
+        output.writeString(jlsPassword);
+        output.writeString(jlsRandom);
     }
 
     @Override
@@ -188,6 +210,12 @@ public class TrojanGoBean extends AbstractBean {
         if (version >= 3) {
             realityPubKey = input.readString();
             realityShortId = input.readString();
+        }
+        if (version >= 4) {
+            serverSecurity = input.readString();
+            alpn = input.readString();
+            jlsPassword = input.readString();
+            jlsRandom = input.readString();
         }
     }
 
