@@ -247,6 +247,9 @@ fun JSONObject.parseTrojanGo(): TrojanGoBean {
         }
         optJSONArray("ssl")?.apply {
             sni = optString("sni", sni)
+            optJSONArray("alpn")?.apply {
+                alpn = join("\n")
+            }
             fingerprint = optString("fingerprint", fingerprint)
             serverSecurity = "tls"
             optJSONArray("reality")?.apply {
